@@ -1,22 +1,24 @@
 <template>
   <nav class="navigation-bar">
-    <!-- Background Effects -->
+    <!-- Fondo sutil con degradado y patrón -->
     <div class="nav-background">
       <div class="nav-gradient"></div>
       <div class="nav-pattern"></div>
     </div>
 
+    <!-- Logo: clic lleva a "/" (Dashboard) -->
     <div class="logo">
       <router-link to="/">
         <div class="logo-container">
           <div class="logo-glow"></div>
-          <img :src="logo" alt="Int Bienes" class="logo-image">
+          <img :src="logo" alt="Instituto Nelson Torres" class="logo-image" />
         </div>
       </router-link>
     </div>
 
-    <ul>
-      <li><router-link to="/">Inicio</router-link></li>
+    <!-- Menú de navegación -->
+    <ul class="nav-list">
+      <li><router-link to="/" exact>Inicio</router-link></li>
       <li><router-link to="/assets">Bienes</router-link></li>
       <li><router-link to="/areas">Áreas</router-link></li>
       <li><router-link to="/users">Usuarios</router-link></li>
@@ -26,66 +28,44 @@
 </template>
 
 <script>
-import logo from '@/components/image/logoInt.png';
-
 export default {
-  name: "NavigationBar",
-  data() {
-    return {
-      logo, // Ruta al logo
-    };
+  name: 'NavigationBar',
+  props: {
+    logo: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>
 
 <style scoped>
-/* Enhanced Color Palette */
-:root {
-  --primary-red: #FF2D55;
-  --secondary-red: #FF6B8A;
-  --primary-blue: #007AFF;
-  --secondary-blue: #5AC8FA;
-  --primary-purple: #AF52DE;
-  --secondary-purple: #DA70D6;
-  --primary-green: #34C759;
-  --secondary-green: #66D4AA;
-  --primary-orange: #FF9500;
-  --secondary-orange: #FFB84D;
-  
-  --gradient-primary: linear-gradient(135deg, var(--primary-red), var(--primary-purple));
-  --gradient-secondary: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-  --gradient-success: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
-  --gradient-warning: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
-  
-  --white: #FFFFFF;
-  --black: #252525;
-  --light-gray: #F8F9FA;
-  --border-light: #E9ECEF;
-  
-  --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
-  --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.15);
-  
-  --border-radius: 8px;
-  --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
+/* ------------------------------------------------------------
+   Asume que estas variables globales están en variables.css:
+   --institutional-red, --institutional-black, --institutional-white,
+   --gradient-primary, --gradient-secondary,
+   --dark-bg, --card-bg, --surface-bg, --border-color,
+   --text-primary, --text-secondary,
+   --shadow-glow, --shadow-card, --shadow-hover,
+   --border-radius, --transition,
+   --spacing-xs, --spacing-sm, --spacing-md, --spacing-lg,
+   --font-base, --font-heading, etc.
+   ------------------------------------------------------------ */
 
-/* Barra de navegación estática */
 .navigation-bar {
-  background: var(--white);
-  padding: 20px;
-  box-shadow: var(--shadow-light);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;                           /* ocupa TODO el ancho */
+  background: var(--card-bg);
+  padding: var(--spacing-md) var(--spacing-lg); /* padding arriba/abajo + lados */
+  box-shadow: var(--shadow-card);
+  border-bottom: 1px solid var(--border-color);
   z-index: 1000;
-  width: 100%;
-  margin: 0;
   overflow: hidden;
-  border-bottom: 1px solid var(--border-light);
 }
 
-/* Background Effects */
 .nav-background {
   position: absolute;
   top: 0;
@@ -101,8 +81,15 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--primary-red) 0%, transparent 20%, var(--primary-blue) 80%, var(--primary-purple) 100%);
-  opacity: 0.03;
+  /* Degradado muy tenue */
+  background: linear-gradient(
+    135deg,
+    var(--institutional-red) 0%,
+    transparent 25%,
+    var(--institutional-black) 75%,
+    var(--institutional-red) 100%
+  );
+  opacity: 0.02;
 }
 
 .nav-pattern {
@@ -112,30 +99,38 @@ export default {
   width: 100%;
   height: 100%;
   background-size: 60px 60px;
-  background-image: radial-gradient(circle, rgba(255, 45, 85, 0.05) 1px, transparent 1px);
-  opacity: 0.5;
+  background-image: radial-gradient(
+    circle,
+    rgba(237, 28, 36, 0.03) 1px,
+    transparent 1px
+  );
+  opacity: 0.3;
 }
 
-/* Logo */
+/* ---------------------------------------------
+   Logo (clic lleva a "/")
+   --------------------------------------------- */
 .logo {
-  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .logo-container {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .logo-glow {
   position: absolute;
-  top: -5px;
-  left: -5px;
-  width: 90px;
-  height: 90px;
+  top: -6px;
+  left: -6px;
+  width: 84px;
+  height: 84px;
   background: var(--gradient-primary);
   border-radius: 50%;
   opacity: 0;
@@ -144,183 +139,199 @@ export default {
 }
 
 .logo-image {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   transition: var(--transition);
-  box-shadow: var(--shadow-light);
+  box-shadow: var(--shadow-card);
 }
 
-.logo:hover .logo-image {
-  transform: scale(1.05);
+.logo-container:hover .logo-image {
+  transform: scale(1.08);
   box-shadow: var(--shadow-hover);
 }
 
-.logo:hover .logo-glow {
-  opacity: 0.2;
-  transform: scale(1.1);
+.logo-container:hover .logo-glow {
+  opacity: 0.15;
+  transform: scale(1.2);
 }
 
-/* Menú */
-.navigation-bar ul {
+/* ---------------------------------------------
+   Lista de enlaces
+   --------------------------------------------- */
+.nav-list {
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: var(--spacing-lg);
   margin: 0;
   padding: 0;
 }
 
-.navigation-bar li {
-  display: inline;
+.nav-list li {
   position: relative;
 }
 
-.navigation-bar a {
-  color: var(--black);
+/* Enlaces base */
+.nav-list a {
+  color: var(--text-primary);
   text-decoration: none;
+  font-family: var(--font-base, 'Segoe UI', sans-serif);
   font-size: 1rem;
-  font-weight: bold;
-  padding: 12px 24px;
+  font-weight: 600;
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--border-radius);
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   background: transparent;
   border: 2px solid transparent;
 }
 
-.navigation-bar a::before {
+/* Efecto “shine” al hover */
+.nav-list a::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 45, 85, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(237, 28, 36, 0.1),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
-.navigation-bar a:hover::before {
+.nav-list a:hover::before {
   left: 100%;
 }
 
-.navigation-bar a::after {
+/* Subrayado animado */
+.nav-list a::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 0;
   height: 3px;
-  background: var(--gradient-primary);
+  background: var(--institutional-red);
   border-radius: 2px;
   transition: var(--transition);
   transform: translateX(-50%);
 }
 
-.navigation-bar a:hover {
-  color: var(--white);
+.nav-list a:hover {
+  color: var(--institutional-white);
   background: var(--gradient-primary);
-  border-color: var(--primary-red);
+  border-color: var(--institutional-red);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
 
-.navigation-bar a:hover::after {
-  width: 80%;
+.nav-list a:hover::after {
+  width: 70%;
 }
 
-.navigation-bar a.router-link-active {
-  color: var(--white);
+/* Enlace activo (ruta actual) */
+.nav-list a.router-link-exact-active,
+.nav-list a.router-link-active {
+  color: var(--institutional-white);
   background: var(--gradient-secondary);
-  border-color: var(--primary-blue);
+  border-color: var(--institutional-black);
   box-shadow: var(--shadow-hover);
 }
 
-.navigation-bar a.router-link-active::after {
-  width: 80%;
-  background: var(--white);
+.nav-list a.router-link-exact-active::after,
+.nav-list a.router-link-active::after {
+  width: 70%;
+  background: var(--institutional-white);
 }
 
-/* Responsive Design */
+/* ---------------------------------------------
+   Responsive
+   --------------------------------------------- */
 @media (max-width: 1200px) {
   .navigation-bar {
-    padding: 15px 20px;
+    padding: var(--spacing-sm) var(--spacing-md);
   }
-  
-  .navigation-bar ul {
-    gap: 15px;
+  .nav-list {
+    gap: var(--spacing-md);
   }
-  
-  .navigation-bar a {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+  .nav-list a {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 768px) {
   .navigation-bar {
-    padding: 15px;
     flex-direction: column;
-    gap: 20px;
+    align-items: flex-start;
+    gap: var(--spacing-md);
   }
-  
-  .navigation-bar ul {
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .navigation-bar a {
-    padding: 8px 16px;
-    font-size: 0.85rem;
-  }
-  
   .logo-container {
     width: 60px;
     height: 60px;
   }
-  
   .logo-image {
     width: 60px;
     height: 60px;
   }
-  
   .logo-glow {
-    width: 70px;
-    height: 70px;
+    width: 72px;
+    height: 72px;
+  }
+  .nav-list {
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+  .nav-list a {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   .navigation-bar {
-    padding: 12px;
+    padding: var(--spacing-xs) var(--spacing-sm);
   }
-  
-  .navigation-bar ul {
-    gap: 8px;
-  }
-  
-  .navigation-bar a {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-  
   .logo-container {
     width: 50px;
     height: 50px;
   }
-  
   .logo-image {
     width: 50px;
     height: 50px;
   }
-  
   .logo-glow {
-    width: 60px;
-    height: 60px;
+    width: 62px;
+    height: 62px;
+  }
+  .nav-list {
+    gap: var(--spacing-xs);
+  }
+  .nav-list a {
+    padding: 4px 8px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------------------------------------------
+   Animaciones adicionales
+   --------------------------------------------- */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 </style>

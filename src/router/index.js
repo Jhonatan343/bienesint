@@ -35,8 +35,8 @@ const routes = [
   },
   {
     path: '/periodos-academicos', // Nueva ruta para Periodos Académicos
-    name: 'PeriodosAcadémicos',
-    component: PeriodosAcademicosView, // Componente que has creado para los periodos académicos
+    name: 'PeriodosAcademicos',
+    component: PeriodosAcademicosView,
   },
 ];
 

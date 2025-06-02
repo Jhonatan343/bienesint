@@ -1,48 +1,20 @@
 <template>
   <div class="periodos-academicos">
-    <h1>Gestión de Periodos Académicos</h1>
+    <!-- Título Principal -->
+    <h1 class="page-title">Gestión de Periodos Académicos</h1>
 
     <!-- Botón para abrir el modal de agregar -->
-    <button @click="openModal()" class="btn-primary">Agregar Periodo</button>
-
-    <!-- Modal para agregar y editar -->
-    <div v-if="isModalOpen" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <h2>{{ periodo.id_periodo ? 'Editar' : 'Agregar' }} Periodo</h2>
-        <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label for="nombre_periodo">Nombre del Periodo</label>
-            <input type="text" id="nombre_periodo" v-model="periodo.nombre_periodo" placeholder="Nombre del periodo"
-              required />
-          </div>
-
-          <div class="form-group">
-            <label for="fecha_inicio">Fecha de Inicio</label>
-            <input type="date" id="fecha_inicio" v-model="periodo.fecha_inicio" required />
-          </div>
-
-          <div class="form-group">
-            <label for="fecha_fin">Fecha de Fin</label>
-            <input type="date" id="fecha_fin" v-model="periodo.fecha_fin" required />
-          </div>
-
-          <div class="form-group">
-            <label for="activo">Activo</label>
-            <input type="checkbox" id="activo" v-model="periodo.activo" />
-          </div>
-
-          <div class="form-buttons">
-            <button type="submit" class="btn-primary">Guardar</button>
-            <button @click="closeModal" type="button" class="btn-close"></button>
-          </div>
-        </form>
-      </div>
+    <div class="actions-bar">
+      <button @click="openModal" class="btn btn-primary">
+        <i class="bx bx-plus-circle"></i>
+        <span>Agregar Nuevo Periodo</span>
+      </button>
     </div>
 
     <!-- Tabla de periodos -->
     <div class="periodos-list">
-      <h3>Periodos Registrados</h3>
-      <table>
+      <h2 class="list-title">Periodos Registrados</h2>
+      <table class="periodos-table">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -53,19 +25,111 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="periodo in periodos" :key="periodo.id_periodo">
-            <td>{{ periodo.nombre_periodo }}</td>
-            <td>{{ periodo.fecha_inicio }}</td>
-            <td>{{ periodo.fecha_fin }}</td>
-            <td>{{ periodo.activo ? 'Sí' : 'No' }}</td>
+          <tr v-for="p in periodos" :key="p.id_periodo" class="table-row">
+            <td>{{ p.nombre_periodo }}</td>
+            <td>{{ p.fecha_inicio }}</td>
+            <td>{{ p.fecha_fin }}</td>
             <td>
-              <button @click="editPeriodo(periodo)" class="btn-secondary">Editar</button>
-              <button @click="deletePeriodo(periodo.id_periodo)" class="btn-danger">Eliminar</button>
+              <span
+                :class="p.activo ? 'status-active' : 'status-inactive'"
+              >
+                {{ p.activo ? 'Sí' : 'No' }}
+              </span>
             </td>
+            <td class="actions-cell">
+              <button @click="editPeriodo(p)" class="btn btn-secondary btn-sm">
+                <i class="bx bx-edit-alt"></i>
+                Editar
+              </button>
+              <button @click="deletePeriodo(p.id_periodo)" class="btn btn-danger btn-sm">
+                <i class="bx bx-trash"></i>
+                Eliminar
+              </button>
+            </td>
+          </tr>
+          <tr v-if="!periodos.length">
+            <td colspan="5" class="no-data-row">No hay periodos registrados.</td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Modal: Agregar / Editar Periodo -->
+    <transition name="fade-in">
+      <div
+        v-if="isModalOpen"
+        class="modal-overlay"
+        @click.self="closeModal"
+      >
+        <div class="modal-content">
+          <h3 class="modal-title">
+            {{ periodo.id_periodo ? 'Editar Periodo' : 'Agregar Periodo' }}
+          </h3>
+          <form @submit.prevent="submitForm" class="modal-form">
+            <!-- Nombre del Periodo -->
+            <div class="form-group">
+              <label for="nombre_periodo">Nombre del Periodo</label>
+              <input
+                id="nombre_periodo"
+                v-model="periodo.nombre_periodo"
+                type="text"
+                placeholder="Ej. SEMESTRE 2025-1"
+                required
+              />
+            </div>
+
+            <!-- Fecha de Inicio -->
+            <div class="form-group">
+              <label for="fecha_inicio">Fecha de Inicio</label>
+              <input
+                id="fecha_inicio"
+                v-model="periodo.fecha_inicio"
+                type="date"
+                required
+              />
+            </div>
+
+            <!-- Fecha de Fin -->
+            <div class="form-group">
+              <label for="fecha_fin">Fecha de Fin</label>
+              <input
+                id="fecha_fin"
+                v-model="periodo.fecha_fin"
+                type="date"
+                required
+              />
+            </div>
+
+            <!-- Activo -->
+            <div class="form-group form-group-checkbox">
+              <input
+                id="activo"
+                v-model="periodo.activo"
+                type="checkbox"
+              />
+              <label for="activo">Activo</label>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="closeModal"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                {{ periodo.id_periodo ? 'Actualizar' : 'Guardar' }}
+              </button>
+            </div>
+          </form>
+          <button class="modal-close-btn" @click="closeModal">
+            <i class="bx bx-x"></i>
+          </button>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -77,6 +141,8 @@ export default {
   name: 'PeriodosAcademicosView',
   data() {
     return {
+      periodos: [],
+      isModalOpen: false,
       periodo: {
         id_periodo: null,
         nombre_periodo: '',
@@ -84,8 +150,6 @@ export default {
         fecha_fin: '',
         activo: false,
       },
-      periodos: [],
-      isModalOpen: false, // Controla si el modal está abierto o cerrado
     };
   },
   created() {
@@ -94,44 +158,20 @@ export default {
   methods: {
     async fetchPeriodos() {
       try {
-        const response = await axios.get('http://localhost:3000/api/periodos_academicos');
-        this.periodos = response.data;
-      } catch (error) {
-        console.error('Error al cargar los periodos:', error);
+        const resp = await axios.get('http://localhost:3000/api/periodos_academicos');
+        this.periodos = resp.data;
+      } catch (err) {
+        console.error('Error al cargar periodos:', err);
+        Swal.fire('Error', 'No se pudieron cargar los periodos académicos.', 'error');
       }
     },
-    async submitForm() {
-      try {
-        if (this.periodo.id_periodo) {
-          // Editar el periodo existente
-          await axios.put(`http://localhost:3000/api/periodos_academicos/${this.periodo.id_periodo}`, this.periodo);
-          Swal.fire({
-            title: 'Éxito!',
-            text: 'El periodo académico ha sido actualizado correctamente.',
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          });
-        } else {
-          // Crear un nuevo periodo
-          const response = await axios.post('http://localhost:3000/api/periodos_academicos', this.periodo);
-          this.periodos.push(response.data);
-          Swal.fire({
-            title: 'Éxito!',
-            text: 'El nuevo periodo académico ha sido creado correctamente.',
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          });
-        }
-        this.closeModal(); // Cerrar el modal después de guardar
-      } catch (error) {
-        console.error('Error al guardar el periodo:', error);
-        Swal.fire({
-          title: 'Error',
-          text: 'Hubo un problema al guardar el periodo académico.',
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
-      }
+    openModal() {
+      this.resetForm();
+      this.isModalOpen = true;
+    },
+    closeModal() {
+      this.isModalOpen = false;
+      this.resetForm();
     },
     resetForm() {
       this.periodo = {
@@ -142,214 +182,439 @@ export default {
         activo: false,
       };
     },
-    openModal() {
+    formatDate(raw) {
+      if (!raw) return '';
+      const d = new Date(raw);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    },
+    editPeriodo(p) {
+      // Copiamos el objeto para no mutar el original
+      this.periodo = {
+        id_periodo: p.id_periodo,
+        nombre_periodo: p.nombre_periodo,
+        fecha_inicio: this.formatDate(p.fecha_inicio),
+        fecha_fin: this.formatDate(p.fecha_fin),
+        activo: !!p.activo,
+      };
       this.isModalOpen = true;
-      this.resetForm(); // Reiniciar el formulario cuando se abre el modal
     },
-    closeModal() {
-      this.isModalOpen = false;
+    async deletePeriodo(id) {
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Este periodo académico se eliminará definitivamente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      });
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`http://localhost:3000/api/periodos_academicos/${id}`);
+          this.periodos = this.periodos.filter(p => p.id_periodo !== id);
+          Swal.fire('Eliminado', 'Periodo académico eliminado correctamente.', 'success');
+        } catch (err) {
+          console.error('Error al eliminar periodo:', err);
+          Swal.fire('Error', 'No se pudo eliminar el periodo académico.', 'error');
+        }
+      }
     },
-    editPeriodo(periodo) {
-      // Copiar los valores del periodo seleccionado en el formulario
-      this.periodo = { ...periodo };
-      
-      // Asegurarse de que las fechas están correctamente formateadas en el input
-      this.periodo.fecha_inicio = this.formatDate(periodo.fecha_inicio);
-      this.periodo.fecha_fin = this.formatDate(periodo.fecha_fin);
-
-      this.isModalOpen = true; // Asegurarse de que el modal se abra
-    },
-    formatDate(date) {
-      // Formato de fecha que Vue espera: 'yyyy-MM-dd'
-      if (!date) return '';
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = ('0' + (d.getMonth() + 1)).slice(-2);
-      const day = ('0' + d.getDate()).slice(-2);
-      return `${year}-${month}-${day}`;
-    },
-    async deletePeriodo(id_periodo) {
+    async submitForm() {
       try {
-        await Swal.fire({
-          title: '¿Estás seguro?',
-          text: 'Este periodo académico será eliminado permanentemente.',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            await axios.delete(`http://localhost:3000/api/periodos_academicos/${id_periodo}`);
-            this.periodos = this.periodos.filter(periodo => periodo.id_periodo !== id_periodo);
-            Swal.fire({
-              title: 'Éxito!',
-              text: 'El periodo académico ha sido eliminado correctamente.',
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
+        if (this.periodo.id_periodo) {
+          // Actualizar
+          await axios.put(
+            `http://localhost:3000/api/periodos_academicos/${this.periodo.id_periodo}`,
+            this.periodo
+          );
+          // Refrescar lista localmente
+          const idx = this.periodos.findIndex(p => p.id_periodo === this.periodo.id_periodo);
+          if (idx !== -1) {
+            this.periodos.splice(idx, 1, {
+              ...this.periodo,
+              // Asegurarse de mantener el formato original si tu API regresa algo distinto:
+              fecha_inicio: this.periodo.fecha_inicio,
+              fecha_fin: this.periodo.fecha_fin,
             });
           }
-        });
-      } catch (error) {
-        console.error('Error al eliminar el periodo:', error);
-        Swal.fire({
-          title: 'Error',
-          text: 'Hubo un problema al eliminar el periodo académico.',
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
+          Swal.fire('Actualizado', 'Periodo académico actualizado correctamente.', 'success');
+        } else {
+          // Crear
+          const resp = await axios.post(
+            'http://localhost:3000/api/periodos_academicos',
+            this.periodo
+          );
+          this.periodos.push(resp.data);
+          Swal.fire('Guardado', 'Periodo académico creado correctamente.', 'success');
+        }
+
+        this.closeModal();
+      } catch (err) {
+        console.error('Error al guardar periodo:', err);
+        Swal.fire('Error', 'Hubo un problema al guardar el periodo académico.', 'error');
       }
     },
   },
 };
 </script>
 
-
-
 <style scoped>
-/* Estilos generales */
+/* ------------------------------------------------------------
+   Variables de color y tipografía
+   (Asegúrate de definir estas mismas variables en tu archivo global
+    variables.css o main.css para mantener coherencia en toda la app)
+   ------------------------------------------------------------ */
+:root {
+  --primary-red: #ff2d55;
+  --primary-blue: #007aff;
+  --dark-bg: #f5f5f5;
+  --card-bg: #ffffff;
+  --surface-bg: #fafafa;
+  --border-color: #e0e0e0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --gradient-primary: linear-gradient(135deg, #ff2d55, #af52de);
+  --gradient-secondary: linear-gradient(135deg, #007aff, #5ac8fa);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --border-radius: 8px;
+  --border-radius-large: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-heading: 'Montserrat', sans-serif;
+}
+
+/* ------------------------------------------------------------
+   Estilos Generales de la Página
+   ------------------------------------------------------------ */
 .periodos-academicos {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  background: var(--dark-bg);
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+  font-family: var(--font-base);
+  color: var(--text-primary);
 }
 
-h1 {
+.page-title {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-weight: 700;
   text-align: center;
-  color: #333;
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+}
+.page-title::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 4px;
+  background: var(--gradient-primary);
+  margin: var(--spacing-xs) auto 0;
+  border-radius: 2px;
+  animation: expand-underline 0.8s ease-out forwards;
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0;
 }
 
-button {
-  padding: 10px 20px;
-  border-radius: 5px;
+@keyframes expand-underline {
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------
+   Barra de Acción (Botón Agregar)
+   ------------------------------------------------------------ */
+.actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-md);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--border-radius);
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  position: relative;
+  color: var(--text-secondary);
 }
 
-button.btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: none;
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 0.875rem;
 }
 
-button.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  border: none;
+.btn-primary {
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: var(--shadow-card);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
-button.btn-danger {
-  background-color: #dc3545;
-  color: white;
-  border: none;
+.btn-secondary {
+  background: var(--surface-bg);
+  color: var(--primary-red);
+  border: 2px solid var(--primary-red);
+}
+.btn-secondary:hover {
+  background: var(--primary-red);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
-button:hover {
-  opacity: 0.8;
+.btn-danger {
+  background: var(--primary-red);
+  color: #fff;
+}
+.btn-danger:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
-button:focus {
-  outline: none;
-}
-
+/* ------------------------------------------------------------
+   Tabla de Periodos
+   ------------------------------------------------------------ */
 .periodos-list {
-  margin-top: 30px;
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-card);
 }
 
-table {
+.list-title {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+}
+
+.periodos-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.95rem;
+  color: var(--text-primary);
 }
 
-table th,
-table td {
-  padding: 12px;
+.periodos-table th,
+.periodos-table td {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
   text-align: left;
-  border: 1px solid #ddd;
 }
 
-table th {
-  background-color: #f4f4f4;
+.periodos-table th {
+  background: var(--gradient-primary);
+  color: #fff;
+  font-weight: 600;
 }
 
-table tr:hover {
-  background-color: #f1f1f1;
+.periodos-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
 }
 
-/* Estilos para el modal */
+.periodos-table tbody tr:hover {
+  background: rgba(237, 28, 36, 0.05);
+  transition: background 0.2s ease;
+}
+
+.status-active {
+  color: var(--primary-green, #34c759);
+  font-weight: 600;
+}
+
+.status-inactive {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.actions-cell > .btn {
+  margin-right: var(--spacing-xs);
+}
+
+.no-data-row {
+  text-align: center;
+  padding: var(--spacing-md);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------
+   Modal Overlay y Contenido
+   ------------------------------------------------------------ */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2000;
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-large);
+  width: 90%;
+  max-width: 480px;
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-hover);
+  animation: slide-in-down 0.4s ease-out;
 }
 
-.modal-content h2 {
-  text-align: center;
-  margin-bottom: 20px;
+@keyframes slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Título del modal */
+.modal-title {
+  font-family: var(--font-heading);
   font-size: 1.5rem;
-  color: #333;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Botón para cerrar el modal (✕) */
+.modal-close-btn {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.modal-close-btn:hover {
+  color: var(--primary-red);
+}
+
+/* ------------------------------------------------------------
+   Formulario dentro del modal
+   ------------------------------------------------------------ */
+.modal-form {
+  margin-top: var(--spacing-md);
 }
 
 .form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  font-size: 1rem;
-  color: #333;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.form-group input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.form-buttons {
+  margin-bottom: var(--spacing-md);
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  flex-direction: column;
+}
+.form-group label {
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="email"],
+.form-group input[type="tel"] {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background: var(--surface-bg);
+  transition: border-color 0.2s ease;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
 }
 
-.modal-content .btn-close {
-  background-color: #ff6347;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
+/* Checkbox alineado */
+.form-group-checkbox {
+  flex-direction: row;
+  align-items: center;
+}
+.form-group-checkbox input[type="checkbox"] {
+  margin-right: var(--spacing-xs);
 }
 
-.modal-content .btn-close:hover {
-  background-color: #e55347;
+/* Botones del formulario */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+.form-actions .btn {
+  min-width: 100px;
 }
 
-@media (max-width: 768px) {
+/* ------------------------------------------------------------
+   Ajustes Responsivos
+   ------------------------------------------------------------ */
+@media (max-width: 600px) {
   .form-group {
     flex-direction: column;
+  }
+  .actions-bar {
+    justify-content: center;
+  }
+  .btn {
+    width: 100%;
+  }
+  .modal-content {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-content {
+    padding: var(--spacing-sm);
+  }
+  .modal-title {
+    font-size: 1.3rem;
+  }
+  .btn {
+    font-size: 0.875rem;
   }
 }
 </style>

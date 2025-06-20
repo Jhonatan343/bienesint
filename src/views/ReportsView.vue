@@ -5,52 +5,46 @@
          1) CARDS DE ESTADÍSTICAS
          ───────────────────────────────────────────────────────────────── -->
     <section class="stats-cards">
-      <div class="stat-card">
+      <div class="stat-card stat-card-blue">
         <h3>Total Bienes</h3>
-        <p class="stat-number">{{ stats.total_bienes ?? '...' }}</p>
+        <p class="stat-number">{{ stats.total_bienes }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-green">
         <h3>Bienes Activos</h3>
-        <p class="stat-number">{{ stats.bienes_activos ?? '...' }}</p>
+        <p class="stat-number">{{ stats.bienes_activos }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-yellow">
         <h3>En Reparación</h3>
-        <p class="stat-number">{{ stats.bienes_reparacion ?? '...' }}</p>
+        <p class="stat-number">{{ stats.bienes_reparacion }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-red">
         <h3>Dado de Baja</h3>
-        <p class="stat-number">{{ stats.bienes_baja ?? '...' }}</p>
+        <p class="stat-number">{{ stats.bienes_baja }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-purple">
         <h3>Total Usuarios</h3>
-        <p class="stat-number">{{ stats.total_usuarios ?? '...' }}</p>
+        <p class="stat-number">{{ stats.total_usuarios }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-indigo">
         <h3>Total Ubicaciones</h3>
-        <p class="stat-number">{{ stats.total_ubicaciones ?? '...' }}</p>
+        <p class="stat-number">{{ stats.total_ubicaciones }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-pink">
         <h3>Total Categorías</h3>
-        <p class="stat-number">{{ stats.total_categorias ?? '...' }}</p>
+        <p class="stat-number">{{ stats.total_categorias }}</p>
       </div>
-      <div class="stat-card">
+      <div class="stat-card stat-card-teal">
         <h3>Valor Total Bienes</h3>
         <p class="stat-number">
-          {{ stats.valor_total_bienes !== null ? `$ ${stats.valor_total_bienes.toFixed(2)}` : '...' }}
+          {{ formatCurrency(stats.valor_total_bienes) }}
         </p>
       </div>
     </section>
 
-    <!-- ─────────────────────────────────────────────────────────────────
-         2) GRÁFICA DE DONA: Distribución de Bienes por Estado
-         ───────────────────────────────────────────────────────────────── -->
-    <section class="chart-section">
-      <h4>Distribución de Bienes por Estado</h4>
-      <canvas id="estadoChart" class="chart-canvas"></canvas>
-    </section>
+
 
     <!-- ─────────────────────────────────────────────────────────────────
-         3) BOTÓN “GENERAR REPORTE” + MODAL
+         3) BOTÓN "GENERAR REPORTE" + MODAL
          ───────────────────────────────────────────────────────────────── -->
     <section class="report-button-wrapper">
       <button class="btn-generate-report" @click="openModal">
@@ -141,10 +135,10 @@
 
 <script>
 // ──────────────────────────────────────────────────────────────────────
-// Importa Chart.js (asegúrate de haber hecho `npm install chart.js`)
+// Servicios API actualizados
 // ──────────────────────────────────────────────────────────────────────
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
+import Swal from 'sweetalert2';
+import apiClient from '@/services/api.js';
 
 export default {
   name: 'ReportsView',
@@ -152,7 +146,7 @@ export default {
   data() {
     return {
       // ─────────────────────────────────────────────────
-      // Modal “Generar Reporte”
+      // Modal "Generar Reporte"
       // ─────────────────────────────────────────────────
       showModal: false,
       reportOptions: [
@@ -168,24 +162,21 @@ export default {
       // Estadísticas que trae el backend /api/dashboard/stats
       // ─────────────────────────────────────────────────
       stats: {
-        total_bienes: null,
-        bienes_activos: null,
-        bienes_reparacion: null,
-        bienes_baja: null,
-        total_usuarios: null,
-        total_ubicaciones: null,
-        total_categorias: null,
-        valor_total_bienes: null
-      },
-
-      // Instancia de la gráfica de dona para “Bienes por Estado”
-      pieChartInstance: null
+        total_bienes: 0,
+        bienes_activos: 0,
+        bienes_reparacion: 0,
+        bienes_baja: 0,
+        total_usuarios: 0,
+        total_ubicaciones: 0,
+        total_categorias: 0,
+        valor_total_bienes: 0
+      }
     };
   },
 
   computed: {
     // ─────────────────────────────────────────────────────────
-    // Saber si “Seleccionar Todos” está marcado
+    // Saber si "Seleccionar Todos" está marcado
     // ─────────────────────────────────────────────────────────
     allSelected: {
       get() {
@@ -217,118 +208,85 @@ export default {
     },
 
     // ─────────────────────────────────────────────────────────
-    //  “Generar Reporte” (solo muestra un alert de ejemplo)
+    //  Formatear moneda de manera segura
     // ─────────────────────────────────────────────────────────
-    generateReport() {
+    formatCurrency(value) {
+      if (value === null || value === undefined || value === '') {
+        return '...';
+      }
+      
+      const numValue = typeof value === 'string' ? parseFloat(value) : value;
+      
+      if (isNaN(numValue)) {
+        return '$ 0.00';
+      }
+      
+      return `$ ${numValue.toFixed(2)}`;
+    },
+
+    // ─────────────────────────────────────────────────────────
+    //  "Generar Reporte" con SweetAlert2 mejorado
+    // ─────────────────────────────────────────────────────────
+    async generateReport() {
       if (
         this.selectedReports.length === 0 ||
         !this.startDate ||
         !this.endDate
       ) {
-        window.alert(
-          'Por favor seleccione al menos un tipo de reporte y defina un rango de fechas.'
-        );
+        await Swal.fire({
+          title: 'Datos incompletos',
+          text: 'Por favor seleccione al menos un tipo de reporte y defina un rango de fechas.',
+          icon: 'warning',
+          confirmButtonColor: '#ed1c24'
+        });
         return;
       }
 
-      window.alert(
-        `Generando reporte(s): ${this.selectedReports.join(
+      await Swal.fire({
+        title: '¡Reporte Generado!',
+        text: `Generando reporte(s): ${this.selectedReports.join(
           ', '
-        )} desde ${this.startDate} hasta ${this.endDate}`
-      );
+        )} desde ${this.startDate} hasta ${this.endDate}`,
+        icon: 'success',
+        confirmButtonColor: '#ed1c24',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      
       this.closeModal();
     },
 
     // ─────────────────────────────────────────────────────────
-    //  Llamar a GET /api/dashboard/stats y guardar en `this.stats`
+    //  Llamar a GET /api/dashboard/stats usando apiClient
     // ─────────────────────────────────────────────────────────
     async fetchDashboardStats() {
       try {
-        const res = await fetch('/api/dashboard/stats');
-        if (!res.ok) throw new Error('Error al cargar estadísticas');
-        const data = await res.json();
+        const res = await apiClient.get('/dashboard/stats');
+        const data = res.data;
 
-        // Asignamos cada campo retornado al objeto stats
+        // Asignamos cada campo retornado al objeto stats con conversión segura
         this.stats = {
-          total_bienes: data.total_bienes,
-          bienes_activos: data.bienes_activos,
-          bienes_reparacion: data.bienes_reparacion,
-          bienes_baja: data.bienes_baja,
-          total_usuarios: data.total_usuarios,
-          total_ubicaciones: data.total_ubicaciones,
-          total_categorias: data.total_categorias,
-          valor_total_bienes: data.valor_total_bienes
+          total_bienes: parseInt(data.total_bienes) || 0,
+          bienes_activos: parseInt(data.bienes_activos) || 0,
+          bienes_reparacion: parseInt(data.bienes_reparacion) || 0,
+          bienes_baja: parseInt(data.bienes_baja) || 0,
+          total_usuarios: parseInt(data.total_usuarios) || 0,
+          total_ubicaciones: parseInt(data.total_ubicaciones) || 0,
+          total_categorias: parseInt(data.total_categorias) || 0,
+          valor_total_bienes: parseFloat(data.valor_total_bienes) || 0
         };
 
-        // Luego, dibujamos (o redibujamos) la gráfica de dona
-        this.renderPieChart();
+        // Ya no necesitamos renderizar gráfico
+        // this.renderPieChart();
       } catch (err) {
         console.error('fetchDashboardStats error:', err);
-        window.alert('No se pudieron cargar los datos de estadísticas.');
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudieron cargar los datos de estadísticas.',
+          icon: 'error',
+          confirmButtonColor: '#ed1c24'
+        });
       }
-    },
-
-    // ─────────────────────────────────────────────────────────
-    //  Gráfica de Dona: “Bienes por Estado”
-    //  Usa: stats.bienes_activos, stats.bienes_reparacion, stats.bienes_baja
-    // ─────────────────────────────────────────────────────────
-    renderPieChart() {
-      // Si ya existe, destrúyela primero
-      if (this.pieChartInstance) {
-        this.pieChartInstance.destroy();
-      }
-
-      // Etiquetas y datos
-      const labels = ['Activos', 'En Reparación', 'Dado de Baja'];
-      const values = [
-        this.stats.bienes_activos || 0,
-        this.stats.bienes_reparacion || 0,
-        this.stats.bienes_baja || 0
-      ];
-
-      // Paleta de colores
-      const backgroundColors = [
-        '#28a745',  // Verde – Activos
-        '#ffc107',  // Amarillo – En Reparación
-        '#dc3545'   // Rojo – Dado de Baja
-      ];
-
-      const ctx = document.getElementById('estadoChart').getContext('2d');
-      this.pieChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels,
-          datasets: [
-            {
-              data: values,
-              backgroundColor: backgroundColors,
-              borderColor: ['#ffffff', '#ffffff', '#ffffff'],
-              borderWidth: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '50%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: 'var(--text-primary)',
-                font: { size: 13 }
-              }
-            },
-            tooltip: {
-              backgroundColor: 'var(--card-bg)',
-              titleColor: 'var(--text-primary)',
-              bodyColor: 'var(--text-secondary)',
-              borderColor: 'var(--border-color)',
-              borderWidth: 1
-            }
-          }
-        }
-      });
     }
   },
 
@@ -382,32 +340,20 @@ export default {
 .stat-number {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--institutional-red);
   margin: 0;
 }
 
-/* ─────────── Gráfica de Dona ─────────── */
-.chart-section {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-large);
-  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow-card);
-}
-.chart-section h4 {
-  margin: 0 0 var(--spacing-md);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--institutional-black);
-  text-align: center;
-}
-.chart-canvas {
-  width: 100%;
-  height: 300px;
-}
+/* Colores específicos para cada card */
+.stat-card-blue .stat-number { color: #3b82f6; }
+.stat-card-green .stat-number { color: #10b981; }
+.stat-card-yellow .stat-number { color: #f59e0b; }
+.stat-card-red .stat-number { color: #ef4444; }
+.stat-card-purple .stat-number { color: #8b5cf6; }
+.stat-card-indigo .stat-number { color: #6366f1; }
+.stat-card-pink .stat-number { color: #ec4899; }
+.stat-card-teal .stat-number { color: #14b8a6; }
 
-/* ─────────── Botón “Generar Reporte” ─────────── */
+/* ─────────── Botón "Generar Reporte" ─────────── */
 .report-button-wrapper {
   display: flex;
   justify-content: center;
@@ -417,8 +363,8 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
-  background: var(--gradient-primary);
-  color: var(--institutional-white);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
   border: none;
   border-radius: var(--border-radius);
   padding: var(--spacing-sm) var(--spacing-lg);
@@ -480,7 +426,7 @@ export default {
   transition: color 0.2s;
 }
 .close-btn:hover {
-  color: var(--institutional-red);
+  color: #ef4444;
 }
 
 /* ─────────── FORMULARIO DEL MODAL ─────────── */
@@ -514,7 +460,7 @@ export default {
 .form-check-input {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--institutional-red);
+  accent-color: #3b82f6;
   cursor: pointer;
 }
 .form-check-label {
@@ -543,7 +489,7 @@ export default {
 }
 .form-control:focus {
   outline: none;
-  border-color: var(--institutional-red);
+  border-color: #3b82f6;
 }
 
 /* ─────────── BOTONES DEL MODAL ─────────── */
@@ -554,8 +500,8 @@ export default {
   margin-top: var(--spacing-md);
 }
 .btn-generate {
-  background: var(--gradient-primary);
-  color: var(--institutional-white);
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
   border: none;
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--border-radius);
@@ -564,20 +510,20 @@ export default {
 }
 .btn-generate:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 .btn-cancel {
   background: var(--surface-bg);
-  color: var(--institutional-black);
-  border: 2px solid var(--border-color);
+  color: #6b7280;
+  border: 2px solid #d1d5db;
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .btn-cancel:hover {
-  border-color: var(--institutional-red);
-  color: var(--institutional-red);
+  border-color: #ef4444;
+  color: #ef4444;
   transform: translateY(-2px);
 }
 

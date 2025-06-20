@@ -12,6 +12,12 @@
         <p class="subtitle">Administra y organiza las ubicaciones institucionales</p>
       </div>
       <div class="header-actions">
+        <button @click="exportData" class="btn btn-secondary btn-export" title="Exportar datos">
+          <div class="btn-content">
+            <i class="bx bx-download"></i>
+            <span>Exportar</span>
+          </div>
+        </button>
         <button @click="openModal" class="btn btn-primary btn-modern">
           <div class="btn-content">
             <i class="bx bx-map-pin"></i>
@@ -22,6 +28,52 @@
       </div>
     </div>
 
+    <!-- NUEVA SECCIÓN: Panel de Estadísticas Detalladas -->
+    <div v-if="ubicaciones.length > 0" class="stats-section">
+      <h2 class="section-title">
+        <i class="bx bx-bar-chart"></i>
+        Resumen de Ubicaciones
+      </h2>
+      <div class="stats-grid">
+        <div class="stat-card total-ubicaciones">
+          <div class="stat-icon">
+            <i class="bx bx-map-pin"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ ubicaciones.length }}</h3>
+            <p>Total Ubicaciones</p>
+          </div>
+        </div>
+        <div class="stat-card total-sedes">
+          <div class="stat-icon">
+            <i class="bx bx-buildings"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ uniqueSedes.length }}</h3>
+            <p>Sedes Activas</p>
+          </div>
+        </div>
+        <div class="stat-card" v-for="(count, sede) in sedeStats" :key="sede">
+          <div class="stat-icon sede-icon">
+            <i class="bx bx-building"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ count }}</h3>
+            <p>{{ sede }}</p>
+          </div>
+        </div>
+        <div class="stat-card total-areas">
+          <div class="stat-icon">
+            <i class="bx bx-category"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ uniqueAreas.length }}</h3>
+            <p>Áreas Diferentes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Loading state -->
     <div v-if="isLoading" class="loading-container">
       <div class="loading-spinner"></div>
@@ -29,14 +81,40 @@
     </div>
 
     <!-- Lista de Ubicaciones en Tabla -->
-    <div v-else-if="ubicaciones.length" class="ubicaciones-grid">
+    <div v-else-if="filteredUbicaciones.length" class="ubicaciones-grid">
       <div class="section-header">
         <h2>
           <i class="bx bx-list-ul"></i>
           Ubicaciones Registradas
         </h2>
-        <div class="stats-badge">
-          {{ ubicaciones.length }} {{ ubicaciones.length === 1 ? 'ubicación' : 'ubicaciones' }}
+        <div class="header-controls">
+          <!-- NUEVOS: Controles de búsqueda y filtros -->
+          <div class="search-controls">
+            <div class="search-box">
+              <i class="bx bx-search"></i>
+              <input 
+                v-model="searchTerm" 
+                type="text" 
+                placeholder="Buscar ubicaciones..."
+                @input="filterUbicaciones"
+              >
+            </div>
+            <select v-model="selectedSede" @change="filterUbicaciones" class="sede-filter">
+              <option value="">Todas las sedes</option>
+              <option v-for="sede in uniqueSedes" :key="sede" :value="sede">
+                {{ sede }}
+              </option>
+            </select>
+            <select v-model="selectedArea" @change="filterUbicaciones" class="area-filter">
+              <option value="">Todas las áreas</option>
+              <option v-for="area in uniqueAreas" :key="area" :value="area">
+                {{ area }}
+              </option>
+            </select>
+          </div>
+          <div class="stats-badge">
+            {{ filteredUbicaciones.length }} de {{ ubicaciones.length }} ubicaciones
+          </div>
         </div>
       </div>
       
@@ -61,6 +139,10 @@
                   <i class="bx bx-note"></i>
                   Descripción
                 </th>
+                <th class="th-qr">
+                  <i class="bx bx-qr"></i>
+                  QR
+                </th>
                 <th class="th-actions">
                   <i class="bx bx-cog"></i>
                   Acciones
@@ -69,7 +151,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="ubicacion in ubicaciones"
+                v-for="ubicacion in filteredUbicaciones"
                 :key="ubicacion.id_ubicacion"
                 class="table-row"
               >
@@ -104,6 +186,16 @@
                     <span>{{ ubicacion.descripcion }}</span>
                   </div>
                 </td>
+                <!-- NUEVA: Columna QR -->
+                <td class="td-qr">
+                  <button
+                    @click="generateQR(ubicacion)"
+                    class="btn-qr"
+                    title="Generar código QR"
+                  >
+                    <i class="bx bx-qr"></i>
+                  </button>
+                </td>
                 <td class="td-actions">
                   <div class="action-buttons">
                     <button
@@ -132,7 +224,7 @@
     </div>
 
     <!-- Estado vacío mejorado -->
-    <div v-else class="empty-state">
+    <div v-else-if="!isLoading && ubicaciones.length === 0" class="empty-state">
       <div class="empty-icon">
         <i class="bx bx-map-alt"></i>
       </div>
@@ -141,6 +233,19 @@
       <button @click="openModal" class="btn btn-outline">
         <i class="bx bx-map-pin"></i>
         Registrar Primera Ubicación
+      </button>
+    </div>
+
+    <!-- Estado de búsqueda sin resultados -->
+    <div v-else-if="!isLoading && ubicaciones.length > 0 && filteredUbicaciones.length === 0" class="empty-search-state">
+      <div class="empty-icon">
+        <i class="bx bx-search-alt"></i>
+      </div>
+      <h3>No se encontraron ubicaciones</h3>
+      <p>Intenta ajustar los filtros de búsqueda</p>
+      <button @click="clearFilters" class="btn btn-outline">
+        <i class="bx bx-refresh"></i>
+        Limpiar Filtros
       </button>
     </div>
 
@@ -266,16 +371,60 @@
         </div>
       </transition>
     </teleport>
+
+    <!-- NUEVO: Modal de QR -->
+    <teleport to="body">
+      <transition name="modal-fade">
+        <div v-if="qrModalOpen" class="modal-backdrop" @click="closeQRModal">
+          <div class="modal-container qr-modal" @click.stop>
+            <div class="modal-header">
+              <div class="modal-title-wrapper">
+                <div class="modal-icon">
+                  <i class="bx bx-qr"></i>
+                </div>
+                <h2>Código QR - {{ selectedUbicacion?.area }}</h2>
+              </div>
+              <button @click="closeQRModal" class="modal-close">
+                <i class="bx bx-x"></i>
+              </button>
+            </div>
+            <div class="modal-body qr-content">
+              <div class="qr-display">
+                <div ref="qrCode" class="qr-code"></div>
+                <div class="qr-info">
+                  <h3>{{ selectedUbicacion?.area }} - Aula {{ selectedUbicacion?.numero_aula }}</h3>
+                  <p><strong>ID:</strong> {{ selectedUbicacion?.id_ubicacion }}</p>
+                  <p><strong>Sede:</strong> {{ selectedUbicacion?.sede }}</p>
+                  <p><strong>Descripción:</strong> {{ selectedUbicacion?.descripcion }}</p>
+                </div>
+              </div>
+              <div class="qr-actions">
+                <button @click="downloadQR" class="download-qr-btn">
+                  <i class="bx bx-download"></i>
+                  Descargar QR
+                </button>
+                <button @click="printQR" class="print-qr-btn">
+                  <i class="bx bx-printer"></i>
+                  Imprimir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </teleport>
   </div>
 </template>
 
 <script>
 import Swal from 'sweetalert2';
+import { ubicacionesService } from '@/services/api.js'; // ← IMPORTAR EL SERVICIO
 
 export default {
   name: 'UbicacionesView',
   data() {
     return {
+      // ✅ DATOS ORIGINALES MANTENIDOS
       isModalOpen: false,
       isEditing: false,
       isLoading: false,
@@ -288,18 +437,52 @@ export default {
         descripcion: '',
       },
       ubicaciones: [],
+
+      // ✅ NUEVOS DATOS AGREGADOS
+      // Filtros y búsqueda
+      searchTerm: '',
+      selectedSede: '',
+      selectedArea: '',
+      filteredUbicaciones: [],
+      
+      // QR Modal
+      qrModalOpen: false,
+      selectedUbicacion: null
     };
   },
+
+  computed: {
+    // ✅ NUEVAS PROPIEDADES COMPUTADAS AGREGADAS
+    uniqueSedes() {
+      const sedes = [...new Set(this.ubicaciones.map(u => u.sede))];
+      return sedes.filter(sede => sede); // Filtrar valores vacíos
+    },
+    
+    uniqueAreas() {
+      const areas = [...new Set(this.ubicaciones.map(u => u.area))];
+      return areas.filter(area => area); // Filtrar valores vacíos
+    },
+    
+    sedeStats() {
+      const stats = {};
+      this.uniqueSedes.forEach(sede => {
+        stats[sede] = this.ubicaciones.filter(u => u.sede === sede).length;
+      });
+      return stats;
+    }
+  },
+
   methods: {
+    // ✅ MÉTODOS ORIGINALES MANTENIDOS
     async fetchUbicaciones() {
       this.isLoading = true;
       try {
-        const res = await fetch('http://localhost:3000/api/ubicaciones');
-        if (!res.ok) throw new Error('Error al cargar ubicaciones');
-        const data = await res.json();
-        this.ubicaciones = data;
+        const res = await ubicacionesService.getAll();
+        this.ubicaciones = res.data;
+        this.filterUbicaciones(); // ✅ AGREGADO: Aplicar filtros después de cargar
+        console.log('✅ Ubicaciones cargadas:', this.ubicaciones.length);
       } catch (err) {
-        console.error('Error al cargar ubicaciones:', err);
+        console.error('❌ Error al cargar ubicaciones:', err);
         Swal.fire({
           title: 'Error',
           text: 'No se pudieron cargar las ubicaciones.',
@@ -310,15 +493,18 @@ export default {
         this.isLoading = false;
       }
     },
+
     openModal() {
       this.resetForm();
       this.isEditing = false;
       this.isModalOpen = true;
     },
+
     closeModal() {
       this.isModalOpen = false;
       this.resetForm();
     },
+
     resetForm() {
       this.ubicacion = {
         area: '',
@@ -330,12 +516,14 @@ export default {
       this.isEditing = false;
       this.isSaving = false;
     },
+
     editUbicacion(record) {
       this.ubicacion = { ...record };
       this.editingId = record.id_ubicacion;
       this.isEditing = true;
       this.isModalOpen = true;
     },
+
     async saveOrUpdateUbicacion() {
       if (this.isEditing) {
         await this.updateUbicacion();
@@ -343,18 +531,16 @@ export default {
         await this.saveUbicacion();
       }
     },
+
     async saveUbicacion() {
       this.isSaving = true;
       try {
-        const res = await fetch('http://localhost:3000/api/ubicaciones', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.ubicacion),
-        });
-        if (!res.ok) throw new Error('Error al guardar');
-        const nuevo = await res.json();
-        this.ubicaciones.push(nuevo);
+        const res = await ubicacionesService.create(this.ubicacion);
+        this.ubicaciones.push(res.data);
+        this.filterUbicaciones(); // ✅ AGREGADO: Actualizar filtros
         this.closeModal();
+        console.log('✅ Ubicación creada:', res.data);
+        this.showNotification('Ubicación registrada correctamente', 'success'); // ✅ AGREGADO: Notificación mejorada
         Swal.fire({
           title: '¡Registrado!',
           text: 'Ubicación registrada correctamente.',
@@ -362,7 +548,8 @@ export default {
           confirmButtonColor: '#ed1c24'
         });
       } catch (err) {
-        console.error(err);
+        console.error('❌ Error al guardar ubicación:', err);
+        this.showNotification('Error al guardar la ubicación', 'error'); // ✅ AGREGADO: Notificación mejorada
         Swal.fire({
           title: 'Error',
           text: 'No se pudo guardar la ubicación.',
@@ -373,24 +560,22 @@ export default {
         this.isSaving = false;
       }
     },
+
     async updateUbicacion() {
       this.isSaving = true;
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/ubicaciones/${this.editingId}`,
-          {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.ubicacion),
-          }
-        );
-        if (!res.ok) throw new Error('Error al actualizar');
-        const updated = await res.json();
+        const res = await ubicacionesService.update(this.editingId, this.ubicacion);
         const idx = this.ubicaciones.findIndex(
           (u) => u.id_ubicacion === this.editingId
         );
-        if (idx !== -1) this.ubicaciones.splice(idx, 1, updated);
+        if (idx !== -1) {
+          // Actualizar con los datos que devuelve el servidor o mantener los actuales
+          this.ubicaciones.splice(idx, 1, { ...this.ubicacion, id_ubicacion: this.editingId });
+        }
+        this.filterUbicaciones(); // ✅ AGREGADO: Actualizar filtros
         this.closeModal();
+        console.log('✅ Ubicación actualizada:', res.data);
+        this.showNotification('Ubicación actualizada correctamente', 'success'); // ✅ AGREGADO: Notificación mejorada
         Swal.fire({
           title: '¡Actualizado!',
           text: 'Ubicación actualizada correctamente.',
@@ -398,7 +583,8 @@ export default {
           confirmButtonColor: '#ed1c24'
         });
       } catch (err) {
-        console.error(err);
+        console.error('❌ Error al actualizar ubicación:', err);
+        this.showNotification('Error al actualizar la ubicación', 'error'); // ✅ AGREGADO: Notificación mejorada
         Swal.fire({
           title: 'Error',
           text: 'No se pudo actualizar la ubicación.',
@@ -409,6 +595,7 @@ export default {
         this.isSaving = false;
       }
     },
+
     async confirmDeleteUbicacion(id) {
       const result = await Swal.fire({
         title: '¿Eliminar ubicación?',
@@ -425,16 +612,16 @@ export default {
         this.deleteUbicacion(id);
       }
     },
+
     async deleteUbicacion(id) {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/ubicaciones/${id}`,
-          { method: 'DELETE' }
-        );
-        if (!res.ok) throw new Error('Error al eliminar');
+        await ubicacionesService.delete(id);
         this.ubicaciones = this.ubicaciones.filter(
           (u) => u.id_ubicacion !== id
         );
+        this.filterUbicaciones(); // ✅ AGREGADO: Actualizar filtros
+        console.log('✅ Ubicación eliminada:', id);
+        this.showNotification('Ubicación eliminada correctamente', 'success'); // ✅ AGREGADO: Notificación mejorada
         Swal.fire({
           title: '¡Eliminado!',
           text: 'Ubicación eliminada correctamente.',
@@ -442,7 +629,8 @@ export default {
           confirmButtonColor: '#ed1c24'
         });
       } catch (err) {
-        console.error(err);
+        console.error('❌ Error al eliminar ubicación:', err);
+        this.showNotification('Error al eliminar la ubicación', 'error'); // ✅ AGREGADO: Notificación mejorada
         Swal.fire({
           title: 'Error',
           text: 'No se pudo eliminar la ubicación.',
@@ -451,17 +639,267 @@ export default {
         });
       }
     },
+
+    // ✅ NUEVOS MÉTODOS AGREGADOS
+    // Filtros y búsqueda
+    filterUbicaciones() {
+      let filtered = [...this.ubicaciones];
+      
+      // Filtro por búsqueda
+      if (this.searchTerm) {
+        const term = this.searchTerm.toLowerCase();
+        filtered = filtered.filter(ubicacion => 
+          ubicacion.area.toLowerCase().includes(term) ||
+          ubicacion.numero_aula.toLowerCase().includes(term) ||
+          ubicacion.sede.toLowerCase().includes(term) ||
+          ubicacion.descripcion.toLowerCase().includes(term) ||
+          ubicacion.id_ubicacion.toString().includes(term)
+        );
+      }
+      
+      // Filtro por sede
+      if (this.selectedSede) {
+        filtered = filtered.filter(ubicacion => ubicacion.sede === this.selectedSede);
+      }
+      
+      // Filtro por área
+      if (this.selectedArea) {
+        filtered = filtered.filter(ubicacion => ubicacion.area === this.selectedArea);
+      }
+      
+      this.filteredUbicaciones = filtered;
+    },
+
+    clearFilters() {
+      this.searchTerm = '';
+      this.selectedSede = '';
+      this.selectedArea = '';
+      this.filterUbicaciones();
+    },
+
+    // Generación de QR
+    generateQR(ubicacion) {
+      this.selectedUbicacion = ubicacion;
+      this.qrModalOpen = true;
+      
+      this.$nextTick(() => {
+        this.createQRCode(ubicacion);
+      });
+    },
+
+    createQRCode(ubicacion) {
+      // Datos para el QR
+      const qrData = {
+        id: ubicacion.id_ubicacion,
+        area: ubicacion.area,
+        numero_aula: ubicacion.numero_aula,
+        sede: ubicacion.sede,
+        descripcion: ubicacion.descripcion,
+        tipo: 'ubicacion',
+        url: `${window.location.origin}/ubicacion/${ubicacion.id_ubicacion}`
+      };
+      
+      // Crear QR usando servicio online
+      const qrText = JSON.stringify(qrData);
+      const qrContainer = this.$refs.qrCode;
+      
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        
+        const img = document.createElement('img');
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
+        img.alt = `QR Code for ${ubicacion.area} - ${ubicacion.numero_aula}`;
+        img.style.width = '200px';
+        img.style.height = '200px';
+        img.style.borderRadius = '8px';
+        
+        qrContainer.appendChild(img);
+      }
+    },
+
+    closeQRModal() {
+      this.qrModalOpen = false;
+      this.selectedUbicacion = null;
+    },
+
+    downloadQR() {
+      const qrImg = this.$refs.qrCode.querySelector('img');
+      if (qrImg) {
+        const link = document.createElement('a');
+        link.download = `QR_Ubicacion_${this.selectedUbicacion.id_ubicacion}.png`;
+        link.href = qrImg.src;
+        link.click();
+      }
+    },
+
+    printQR() {
+      const printContent = `
+        <div style="text-align: center; padding: 20px; font-family: Arial;">
+          <h2>${this.selectedUbicacion.area} - Aula ${this.selectedUbicacion.numero_aula}</h2>
+          <p><strong>ID:</strong> ${this.selectedUbicacion.id_ubicacion}</p>
+          <p><strong>Sede:</strong> ${this.selectedUbicacion.sede}</p>
+          <p><strong>Descripción:</strong> ${this.selectedUbicacion.descripcion}</p>
+          <div style="margin: 20px 0;">
+            ${this.$refs.qrCode.innerHTML}
+          </div>
+          <p style="font-size: 12px; color: #666;">Código QR generado automáticamente</p>
+        </div>
+      `;
+      
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head><title>QR - ${this.selectedUbicacion.area}</title></head>
+          <body>${printContent}</body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    },
+
+    // Exportación de datos
+    exportData() {
+      try {
+        const exportData = {
+          ubicaciones: this.ubicaciones,
+          estadisticas: {
+            total_ubicaciones: this.ubicaciones.length,
+            total_sedes: this.uniqueSedes.length,
+            sedes: this.sedeStats,
+            total_areas: this.uniqueAreas.length,
+            areas: this.uniqueAreas
+          },
+          fecha_exportacion: new Date().toISOString()
+        };
+        
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+          type: 'application/json' 
+        });
+        
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ubicaciones_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+        this.showNotification('Datos exportados correctamente', 'success');
+      } catch (error) {
+        console.error('Error al exportar:', error);
+        this.showNotification('Error al exportar los datos', 'error');
+      }
+    },
+
+    // Sistema de notificaciones
+    showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+      
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: ${type === 'error' ? '#ef4444' : '#10b981'};
+        color: white;
+        border-radius: 8px;
+        z-index: 10000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: slideInRight 0.3s ease;
+        max-width: 300px;
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
   },
+
   created() {
     this.fetchUbicaciones();
+    
+    // Agregar estilos para animaciones de notificaciones
+    if (!document.querySelector('#ubicaciones-notification-styles')) {
+      const style = document.createElement('style');
+      style.id = 'ubicaciones-notification-styles';
+      style.textContent = `
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(100%); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
   },
+
+  // ✅ WATCHER AGREGADO para filtros automáticos
+  watch: {
+    ubicaciones: {
+      handler() {
+        this.filterUbicaciones();
+      },
+      deep: true
+    }
+  }
 };
 </script>
 
 <style scoped>
 /* ======================================
-   Layout principal
+   ESTILOS ORIGINALES MANTENIDOS + NUEVOS
    ====================================== */
+
+/* ✅ Variables CSS para mantener consistencia */
+:root {
+  --institutional-red: #ed1c24;
+  --institutional-black: #111111;
+  --institutional-white: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+  --border-radius: 8px;
+  --border-radius-large: 12px;
+  --border-radius-sm: 4px;
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-floating: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 4px 15px rgba(237, 28, 36, 0.3);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --gradient-primary: linear-gradient(135deg, #ed1c24 0%, #b30f1b 100%);
+  --gradient-secondary: linear-gradient(135deg, #111111 0%, #2c2c2c 100%);
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --transition: all 0.3s ease;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-heading: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --white: #ffffff;
+}
+
+/* ✅ LAYOUT PRINCIPAL ORIGINAL */
 .ubicaciones-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -471,9 +909,7 @@ export default {
   min-height: 100vh;
 }
 
-/* ======================================
-   Header Section
-   ====================================== */
+/* ✅ HEADER SECTION ORIGINAL MEJORADO */
 .header-section {
   background: var(--card-bg);
   border-radius: var(--border-radius-large);
@@ -536,11 +972,109 @@ export default {
 
 .header-actions {
   flex-shrink: 0;
+  display: flex;
+  gap: var(--spacing-md);
 }
 
-/* ======================================
-   Botones modernos
-   ====================================== */
+/* ✅ NUEVA SECCIÓN: ESTADÍSTICAS */
+.stats-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-lg) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.section-title i {
+  color: var(--institutional-red);
+  font-size: 1.75rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.stat-card {
+  background: var(--card-bg);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  transition: var(--transition);
+  border: 2px solid transparent;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-floating);
+}
+
+.total-ubicaciones:hover {
+  border-color: var(--institutional-red);
+}
+
+.total-sedes:hover {
+  border-color: #3b82f6;
+}
+
+.total-areas:hover {
+  border-color: #10b981;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--white);
+}
+
+.total-ubicaciones .stat-icon {
+  background: var(--gradient-primary);
+}
+
+.total-sedes .stat-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.total-areas .stat-icon {
+  background: var(--success-gradient);
+}
+
+.sede-icon {
+  background: var(--gradient-secondary);
+}
+
+.stat-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.stat-content p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ✅ BOTONES MODERNOS ORIGINALES */
 .btn {
   position: relative;
   display: inline-flex;
@@ -634,9 +1168,19 @@ export default {
   border-color: transparent;
 }
 
-/* ======================================
-   Loading States
-   ====================================== */
+/* ✅ NUEVO: Botón de exportar */
+.btn-export {
+  background: var(--success-gradient);
+  color: var(--white);
+  border: none;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+}
+
+/* ✅ LOADING STATES ORIGINALES */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -672,9 +1216,7 @@ export default {
   animation: spin 0.8s linear infinite;
 }
 
-/* ======================================
-   Tabla de Ubicaciones Moderna
-   ====================================== */
+/* ✅ TABLA DE UBICACIONES MODERNA ORIGINAL MEJORADA */
 .ubicaciones-grid {
   background: var(--card-bg);
   border-radius: var(--border-radius-large);
@@ -689,6 +1231,8 @@ export default {
   margin-bottom: var(--spacing-xl);
   padding-bottom: var(--spacing-md);
   border-bottom: 2px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
 }
 
 .section-header h2 {
@@ -702,6 +1246,68 @@ export default {
   margin: 0;
 }
 
+/* ✅ NUEVOS: Controles de búsqueda y filtros */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.search-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.search-box input {
+  padding: 8px 12px 8px 35px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  width: 200px;
+  font-size: var(--font-size-sm);
+  transition: var(--transition);
+  background: var(--institutional-white);
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--institutional-red);
+  box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.1);
+}
+
+.sede-filter,
+.area-filter {
+  padding: 8px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--institutional-white);
+  font-size: var(--font-size-sm);
+  transition: var(--transition);
+  min-width: 120px;
+}
+
+.sede-filter:focus,
+.area-filter:focus {
+  outline: none;
+  border-color: var(--institutional-red);
+  box-shadow: 0 0 0 3px rgba(237, 28, 36, 0.1);
+}
+
 .stats-badge {
   background: var(--gradient-primary);
   color: var(--white);
@@ -709,6 +1315,7 @@ export default {
   border-radius: 999px;
   font-size: var(--font-size-sm);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .table-container {
@@ -729,9 +1336,7 @@ export default {
   background: var(--institutional-white);
 }
 
-/* ======================================
-   Encabezados de Tabla
-   ====================================== */
+/* ✅ ENCABEZADOS DE TABLA ORIGINALES */
 .ubicaciones-table thead {
   background: var(--gradient-primary);
 }
@@ -754,15 +1359,14 @@ export default {
   font-size: 1rem;
 }
 
-.th-location { width: 25%; }
+.th-location { width: 20%; }
 .th-details { width: 15%; }
-.th-sede { width: 20%; }
+.th-sede { width: 15%; }
 .th-description { width: 25%; }
-.th-actions { width: 15%; min-width: 160px; }
+.th-qr { width: 8%; text-align: center; } /* ✅ NUEVA COLUMNA QR */
+.th-actions { width: 17%; min-width: 160px; }
 
-/* ======================================
-   Filas de Tabla
-   ====================================== */
+/* ✅ FILAS DE TABLA ORIGINALES */
 .ubicaciones-table tbody tr {
   transition: var(--transition);
   border-bottom: 1px solid var(--border-color);
@@ -787,9 +1391,7 @@ export default {
   border: none;
 }
 
-/* ======================================
-   Celdas Específicas
-   ====================================== */
+/* ✅ CELDAS ESPECÍFICAS ORIGINALES */
 .location-cell {
   display: flex;
   align-items: center;
@@ -868,9 +1470,33 @@ export default {
   word-break: break-word;
 }
 
-/* ======================================
-   Botones de Tabla
-   ====================================== */
+/* ✅ NUEVA: Celda QR */
+.td-qr {
+  text-align: center;
+}
+
+.btn-qr {
+  background: #3b82f6;
+  color: var(--white);
+  border: none;
+  padding: 8px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-qr:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+/* ✅ BOTONES DE TABLA ORIGINALES */
 .action-buttons {
   display: flex;
   gap: var(--spacing-sm);
@@ -929,9 +1555,7 @@ export default {
   font-weight: 600;
 }
 
-/* ======================================
-   Estado Vacío
-   ====================================== */
+/* ✅ ESTADO VACÍO ORIGINAL */
 .empty-state {
   background: var(--card-bg);
   border-radius: var(--border-radius-large);
@@ -969,9 +1593,37 @@ export default {
   margin-right: auto;
 }
 
-/* ======================================
-   Modal Mejorado
-   ====================================== */
+/* ✅ NUEVO: Estado de búsqueda sin resultados */
+.empty-search-state {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-large);
+  padding: 3rem var(--spacing-xl);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.empty-search-state .empty-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  margin: 0 auto var(--spacing-md);
+  font-size: 1.5rem;
+}
+
+.empty-search-state h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.empty-search-state p {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+/* ✅ MODAL MEJORADO ORIGINAL */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -1165,9 +1817,77 @@ export default {
   z-index: 11;
 }
 
-/* ======================================
-   Animaciones de Transición
-   ====================================== */
+/* ✅ NUEVOS ESTILOS: MODAL QR */
+.qr-modal {
+  max-width: 500px;
+}
+
+.qr-content {
+  text-align: center;
+}
+
+.qr-display {
+  margin-bottom: var(--spacing-xl);
+}
+
+.qr-code {
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.qr-info h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.qr-info p {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.875rem;
+}
+
+.qr-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.download-qr-btn,
+.print-qr-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: var(--transition);
+}
+
+.download-qr-btn {
+  background: #10b981;
+  color: var(--white);
+}
+
+.download-qr-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.print-qr-btn {
+  background: #3b82f6;
+  color: var(--white);
+}
+
+.print-qr-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* ✅ ANIMACIONES DE TRANSICIÓN ORIGINALES */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: var(--transition);
@@ -1183,19 +1903,32 @@ export default {
   transform: scale(0.9) translateY(-50px);
 }
 
-/* ======================================
-   Responsive Design
-   ====================================== */
+/* ✅ RESPONSIVE DESIGN ORIGINAL MEJORADO */
 @media (max-width: 1024px) {
   .th-description,
   .td-description {
     display: none;
   }
   
-  .th-location { width: 30%; }
+  .th-location { width: 25%; }
   .th-details { width: 20%; }
-  .th-sede { width: 30%; }
-  .th-actions { width: 20%; }
+  .th-sede { width: 20%; }
+  .th-qr { width: 10%; }
+  .th-actions { width: 25%; }
+  
+  .search-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-box input {
+    width: 100%;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+  }
 }
 
 @media (max-width: 768px) {
@@ -1216,6 +1949,7 @@ export default {
   
   .header-actions {
     order: 2;
+    justify-content: center;
   }
   
   .modal-backdrop {
@@ -1254,8 +1988,9 @@ export default {
     display: none;
   }
   
-  .th-location { width: 60%; }
-  .th-actions { width: 40%; }
+  .th-location { width: 50%; }
+  .th-qr { width: 15%; }
+  .th-actions { width: 35%; }
   
   .ubicaciones-table th,
   .ubicaciones-table td {
@@ -1285,6 +2020,16 @@ export default {
     min-width: auto;
     padding: var(--spacing-sm);
   }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .header-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1297,13 +2042,21 @@ export default {
     gap: 0.75rem;
   }
   
-  .section-header {
+  .header-actions {
     flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-md);
+    width: 100%;
+  }
+  
+  .header-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 
-  /* En móviles, mostrar solo ubicación y acciones */
+  /* En móviles, mostrar solo ubicación, QR y acciones */
+  .th-qr { width: 20%; }
+  .th-location { width: 45%; }
+  .th-actions { width: 35%; }
+  
   .ubicaciones-table th,
   .ubicaciones-table td {
     padding: var(--spacing-sm);
@@ -1335,11 +2088,16 @@ export default {
     flex-direction: row;
     justify-content: center;
   }
+  
+  .btn-qr {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    font-size: 0.875rem;
+  }
 }
 
-/* ======================================
-   Optimizaciones de rendimiento
-   ====================================== */
+/* ✅ OPTIMIZACIONES DE RENDIMIENTO ORIGINALES */
 .table-row,
 .btn,
 .modal-container {

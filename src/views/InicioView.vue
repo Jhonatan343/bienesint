@@ -43,12 +43,42 @@
         <!-- Quick Actions -->
         <div class="quick-actions" data-aos="fade-up" data-aos-delay="300">
           <div class="action-grid">
+<<<<<<< HEAD
             <div v-for="(action, index) in quickActions" :key="index" :class="['action-card', action.class]">
               <div class="action-icon">
                 <i :class="action.icon"></i>
               </div>
               <h4>{{ action.title }}</h4>
               <p>{{ action.description }}</p>
+=======
+            <div class="action-card card-bienes">
+              <div class="action-icon">
+                <i class="bx bx-package"></i>
+              </div>
+              <h4>Gestionar Bienes</h4>
+              <p>Administra el inventario completo</p>
+            </div>
+            <div class="action-card card-usuarios">
+              <div class="action-icon">
+                <i class="bx bx-users"></i>
+              </div>
+              <h4>Usuarios</h4>
+              <p>Control de acceso y roles</p>
+            </div>
+            <div class="action-card card-reportes">
+              <div class="action-icon">
+                <i class="bx bx-chart-line"></i>
+              </div>
+              <h4>Reportes</h4>
+              <p>Análisis y estadísticas</p>
+            </div>
+            <div class="action-card card-qr">
+              <div class="action-icon">
+                <i class="bx bx-qr"></i>
+              </div>
+              <h4>Códigos QR</h4>
+              <p>Generación automática</p>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
             </div>
           </div>
         </div>
@@ -160,9 +190,18 @@
           </div>
           <div class="card-body">
             <div class="feature-list">
+<<<<<<< HEAD
               <div class="feature-item" v-for="(req, index) in functionalRequirements" :key="index" :data-aos-delay="200 + (index * 50)" data-aos="slide-right">
                 <i :class="req.icon" class="feature-icon"></i>
                 <span>{{ req.text }}</span>
+=======
+              <div class="feature-item" v-for="(req, index) in functionalRequirements" 
+                   :key="index" 
+                   :data-aos-delay="200 + (index * 50)"
+                   data-aos="slide-right">
+                <div class="feature-bullet functional-bullet"></div>
+                <span>{{ req }}</span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               </div>
             </div>
           </div>
@@ -178,9 +217,18 @@
           </div>
           <div class="card-body">
             <div class="feature-list">
+<<<<<<< HEAD
               <div class="feature-item" v-for="(req, index) in nonFunctionalRequirements" :key="index" :data-aos-delay="300 + (index * 50)" data-aos="slide-left">
                 <i :class="req.icon" class="feature-icon"></i>
                 <span>{{ req.text }}</span>
+=======
+              <div class="feature-item" v-for="(req, index) in nonFunctionalRequirements" 
+                   :key="index"
+                   :data-aos-delay="300 + (index * 50)"
+                   data-aos="slide-left">
+                <div class="feature-bullet non-functional-bullet"></div>
+                <span>{{ req }}</span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               </div>
             </div>
           </div>
@@ -258,6 +306,7 @@
 
 <script>
 export default {
+<<<<<<< HEAD
   name: 'InicioView',
   data() {
     return {
@@ -276,6 +325,25 @@ export default {
         { icon: 'bx bx-lock', text: 'Control de acceso por roles' },
         { icon: 'bx bx-file-find', text: 'Compatibilidad con reportes Excel/PDF' },
         { icon: 'bx bx-bar-chart-alt-2', text: 'Reportes Automatizados' }
+=======
+  name: 'DashboardView',
+  data() {
+    return {
+      functionalRequirements: [
+        'Gestión de bienes con información detallada',
+        'Generación de códigos únicos QR',
+        'Subida de fotos asociadas a cada bien',
+        'Registro de ubicaciones y responsables',
+        'Generación de reportes en Excel y PDF',
+        'Interacción móvil con escaneo QR'
+      ],
+      nonFunctionalRequirements: [
+        'Plataforma web y app móvil',
+        'Interfaz intuitiva y responsiva',
+        'Manejo de grandes volúmenes de datos',
+        'Control de acceso por roles',
+        'Compatibilidad con reportes Excel/PDF'
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
       ],
       summaryItems: [
         {
@@ -289,7 +357,11 @@ export default {
           description: 'Generación y escaneo automático'
         },
         {
+<<<<<<< HEAD
           icon: 'bx bx-bar-chart-alt-2',
+=======
+          icon: 'bx bx-chart-bar',
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           title: 'Reportes Automatizados',
           description: 'Por áreas y responsables'
         },
@@ -298,12 +370,15 @@ export default {
           title: 'Modo Offline',
           description: 'Funcionalidad sin conexión móvil'
         }
+<<<<<<< HEAD
       ],
       quickActions: [
         { icon: 'bx bx-package', title: 'Gestionar Bienes', description: 'Administra el inventario completo', class: 'card-bienes' },
         { icon: 'bx bx-user', title: 'Usuarios', description: 'Control de acceso y roles', class: 'card-usuarios' },
         { icon: 'bx bx-bar-chart-alt-2', title: 'Reportes', description: 'Análisis y estadísticas', class: 'card-reportes' },
         { icon: 'bx bx-qr', title: 'Códigos QR', description: 'Generación automática', class: 'card-qr' }
+=======
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
       ]
     };
   },
@@ -1768,6 +1843,7 @@ export default {
     padding: 1rem;
   }
 }
+<<<<<<< HEAD
 
 /* Forzar visibilidad y tamaño de los iconos Boxicons */
 .bx, .bxl, .bxs {
@@ -1789,4 +1865,6 @@ export default {
   color: inherit !important;
   display: inline-block;
 }
+=======
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
 </style>

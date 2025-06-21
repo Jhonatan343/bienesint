@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script>
   import { ref, computed, onMounted, reactive } from 'vue';
 
@@ -441,18 +442,27 @@
   };
 </script>
 
+=======
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
 <template>
   <div class="mis-bienes-container">
     <!-- Header de la página -->
     <div class="page-header">
       <div class="header-left">
         <h1 class="page-title">
+<<<<<<< HEAD
           <i class="fas fa-user-tag" />
           Mis Bienes Asignados
         </h1>
         <p class="page-subtitle">
           Gestiona y consulta los bienes bajo tu responsabilidad
         </p>
+=======
+          <i class="fas fa-user-tag"></i>
+          Mis Bienes Asignados
+        </h1>
+        <p class="page-subtitle">Gestiona y consulta los bienes bajo tu responsabilidad</p>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
       </div>
       <div class="header-right">
         <div class="user-stats">
@@ -469,6 +479,7 @@
     </div>
 
     <!-- Alertas y notificaciones -->
+<<<<<<< HEAD
     <div v-if="alertas.length > 0" class="alerts-section">
       <div 
         v-for="alerta in alertas" 
@@ -480,6 +491,19 @@
         <span>{{ alerta.mensaje }}</span>
         <button class="alert-close" @click="cerrarAlerta(alerta.id)">
           <i class="fas fa-times" />
+=======
+    <div class="alerts-section" v-if="alertas.length > 0">
+      <div 
+        class="alert-item" 
+        v-for="alerta in alertas" 
+        :key="alerta.id"
+        :class="alerta.tipo"
+      >
+        <i :class="alerta.icono"></i>
+        <span>{{ alerta.mensaje }}</span>
+        <button class="alert-close" @click="cerrarAlerta(alerta.id)">
+          <i class="fas fa-times"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         </button>
       </div>
     </div>
@@ -489,6 +513,7 @@
       <div class="toolbar-left">
         <!-- Buscador principal -->
         <div class="search-container">
+<<<<<<< HEAD
           <i class="fas fa-search" />
           <input 
             v-model="busqueda" 
@@ -496,27 +521,46 @@
             placeholder="Buscar por código, nombre, descripción..."
             class="search-input"
             @input="filtrarBienes"
+=======
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            placeholder="Buscar por código, nombre, descripción..." 
+            v-model="busqueda"
+            @input="filtrarBienes"
+            class="search-input"
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           >
           <button 
             v-if="busqueda" 
             class="clear-search" 
             @click="limpiarBusqueda"
           >
+<<<<<<< HEAD
             <i class="fas fa-times" />
+=======
+            <i class="fas fa-times"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
         </div>
 
         <!-- Filtros -->
         <div class="filters-container">
+<<<<<<< HEAD
           <select v-model="filtroCategoria" class="filter-select" @change="filtrarBienes">
             <option value="">
               Todas las categorías
             </option>
+=======
+          <select v-model="filtroCategoria" @change="filtrarBienes" class="filter-select">
+            <option value="">Todas las categorías</option>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
             <option v-for="categoria in categorias" :key="categoria" :value="categoria">
               {{ categoria }}
             </option>
           </select>
 
+<<<<<<< HEAD
           <select v-model="filtroEstado" class="filter-select" @change="filtrarBienes">
             <option value="">
               Todos los estados
@@ -542,6 +586,19 @@
             <option value="">
               Todas las ubicaciones
             </option>
+=======
+          <select v-model="filtroEstado" @change="filtrarBienes" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="Excelente">Excelente</option>
+            <option value="Bueno">Bueno</option>
+            <option value="Regular">Regular</option>
+            <option value="Malo">Malo</option>
+            <option value="En Mantenimiento">En Mantenimiento</option>
+          </select>
+
+          <select v-model="filtroUbicacion" @change="filtrarBienes" class="filter-select">
+            <option value="">Todas las ubicaciones</option>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
             <option v-for="ubicacion in ubicaciones" :key="ubicacion" :value="ubicacion">
               {{ ubicacion }}
             </option>
@@ -556,19 +613,28 @@
             :class="['toggle-btn', { active: vistaActual === 'tabla' }]"
             @click="cambiarVista('tabla')"
           >
+<<<<<<< HEAD
             <i class="fas fa-table" />
+=======
+            <i class="fas fa-table"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
           <button 
             :class="['toggle-btn', { active: vistaActual === 'tarjetas' }]"
             @click="cambiarVista('tarjetas')"
           >
+<<<<<<< HEAD
             <i class="fas fa-th-large" />
+=======
+            <i class="fas fa-th-large"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
         </div>
 
         <!-- Acciones -->
         <div class="action-buttons">
           <button class="btn btn-outline" @click="exportarPDF">
+<<<<<<< HEAD
             <i class="fas fa-file-pdf" />
             Exportar PDF
           </button>
@@ -578,6 +644,17 @@
           </button>
           <button class="btn btn-primary" @click="abrirReportarIncidencia">
             <i class="fas fa-exclamation-triangle" />
+=======
+            <i class="fas fa-file-pdf"></i>
+            Exportar PDF
+          </button>
+          <button class="btn btn-outline" @click="exportarExcel">
+            <i class="fas fa-file-excel"></i>
+            Exportar Excel
+          </button>
+          <button class="btn btn-primary" @click="abrirReportarIncidencia">
+            <i class="fas fa-exclamation-triangle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
             Reportar Incidencia
           </button>
         </div>
@@ -588,7 +665,11 @@
     <div class="quick-stats">
       <div class="stat-card">
         <div class="stat-icon excelente">
+<<<<<<< HEAD
           <i class="fas fa-check-circle" />
+=======
+          <i class="fas fa-check-circle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ estadisticas.excelente }}</span>
@@ -597,7 +678,11 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon bueno">
+<<<<<<< HEAD
           <i class="fas fa-thumbs-up" />
+=======
+          <i class="fas fa-thumbs-up"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ estadisticas.bueno }}</span>
@@ -606,7 +691,11 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon regular">
+<<<<<<< HEAD
           <i class="fas fa-exclamation-circle" />
+=======
+          <i class="fas fa-exclamation-circle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ estadisticas.regular }}</span>
@@ -615,7 +704,11 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon mantenimiento">
+<<<<<<< HEAD
           <i class="fas fa-tools" />
+=======
+          <i class="fas fa-tools"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ estadisticas.mantenimiento }}</span>
@@ -633,6 +726,7 @@
             Mostrando {{ bienesFiltrados.length }} de {{ totalBienes }} bienes
           </span>
           <div class="table-controls">
+<<<<<<< HEAD
             <select v-model="itemsPorPagina" class="pagination-select" @change="cambiarPaginacion">
               <option value="10">
                 10 por página
@@ -646,6 +740,13 @@
               <option value="100">
                 100 por página
               </option>
+=======
+            <select v-model="itemsPorPagina" @change="cambiarPaginacion" class="pagination-select">
+              <option value="10">10 por página</option>
+              <option value="25">25 por página</option>
+              <option value="50">50 por página</option>
+              <option value="100">100 por página</option>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
             </select>
           </div>
         </div>
@@ -654,6 +755,7 @@
           <table class="bienes-table">
             <thead>
               <tr>
+<<<<<<< HEAD
                 <th class="sortable" @click="ordenarPor('codigo')">
                   Código
                   <i :class="getSortIcon('codigo')" />
@@ -675,6 +777,29 @@
                 <th class="sortable" @click="ordenarPor('fechaAsignacion')">
                   Fecha Asignación
                   <i :class="getSortIcon('fechaAsignacion')" />
+=======
+                <th @click="ordenarPor('codigo')" class="sortable">
+                  Código
+                  <i :class="getSortIcon('codigo')"></i>
+                </th>
+                <th @click="ordenarPor('nombre')" class="sortable">
+                  Nombre
+                  <i :class="getSortIcon('nombre')"></i>
+                </th>
+                <th>Categoría</th>
+                <th>Ubicación</th>
+                <th @click="ordenarPor('estado')" class="sortable">
+                  Estado
+                  <i :class="getSortIcon('estado')"></i>
+                </th>
+                <th @click="ordenarPor('valor')" class="sortable">
+                  Valor
+                  <i :class="getSortIcon('valor')"></i>
+                </th>
+                <th @click="ordenarPor('fechaAsignacion')" class="sortable">
+                  Fecha Asignación
+                  <i :class="getSortIcon('fechaAsignacion')"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </th>
                 <th>Acciones</th>
               </tr>
@@ -690,10 +815,17 @@
                   <span class="codigo">{{ bien.codigo }}</span>
                   <button 
                     class="qr-btn" 
+<<<<<<< HEAD
                     title="Ver código QR"
                     @click.stop="mostrarQR(bien)"
                   >
                     <i class="fas fa-qrcode" />
+=======
+                    @click.stop="mostrarQR(bien)"
+                    title="Ver código QR"
+                  >
+                    <i class="fas fa-qrcode"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </button>
                 </td>
                 <td>
@@ -711,14 +843,19 @@
                     {{ bien.estado }}
                   </span>
                 </td>
+<<<<<<< HEAD
                 <td class="valor-cell">
                   ${{ bien.valor.toLocaleString() }}
                 </td>
+=======
+                <td class="valor-cell">${{ bien.valor.toLocaleString() }}</td>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 <td>{{ formatearFecha(bien.fechaAsignacion) }}</td>
                 <td class="actions-cell">
                   <div class="action-buttons-cell">
                     <button 
                       class="action-btn primary" 
+<<<<<<< HEAD
                       title="Ver detalles"
                       @click.stop="verDetalleBien(bien)"
                     >
@@ -753,6 +890,42 @@
                         </a>
                         <a class="dropdown-item" @click.stop="verHistorial(bien)">
                           <i class="fas fa-history" />
+=======
+                      @click.stop="verDetalleBien(bien)"
+                      title="Ver detalles"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button 
+                      class="action-btn warning" 
+                      @click.stop="solicitarMantenimiento(bien)"
+                      title="Solicitar mantenimiento"
+                    >
+                      <i class="fas fa-wrench"></i>
+                    </button>
+                    <button 
+                      class="action-btn danger" 
+                      @click.stop="reportarProblema(bien)"
+                      title="Reportar problema"
+                    >
+                      <i class="fas fa-exclamation-triangle"></i>
+                    </button>
+                    <div class="dropdown">
+                      <button class="action-btn secondary dropdown-toggle" @click.stop="toggleDropdown(bien.id)">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <div v-if="dropdownAbierto === bien.id" class="dropdown-menu">
+                        <a @click.stop="imprimirEtiqueta(bien)" class="dropdown-item">
+                          <i class="fas fa-print"></i>
+                          Imprimir Etiqueta
+                        </a>
+                        <a @click.stop="solicitarTraslado(bien)" class="dropdown-item">
+                          <i class="fas fa-exchange-alt"></i>
+                          Solicitar Traslado
+                        </a>
+                        <a @click.stop="verHistorial(bien)" class="dropdown-item">
+                          <i class="fas fa-history"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                           Ver Historial
                         </a>
                       </div>
@@ -768,10 +941,17 @@
         <div v-if="totalPaginas > 1" class="pagination">
           <button 
             :disabled="paginaActual === 1" 
+<<<<<<< HEAD
             class="pagination-btn"
             @click="irAPagina(paginaActual - 1)"
           >
             <i class="fas fa-chevron-left" />
+=======
+            @click="irAPagina(paginaActual - 1)"
+            class="pagination-btn"
+          >
+            <i class="fas fa-chevron-left"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
           
           <button
@@ -785,10 +965,17 @@
           
           <button 
             :disabled="paginaActual === totalPaginas" 
+<<<<<<< HEAD
             class="pagination-btn"
             @click="irAPagina(paginaActual + 1)"
           >
             <i class="fas fa-chevron-right" />
+=======
+            @click="irAPagina(paginaActual + 1)"
+            class="pagination-btn"
+          >
+            <i class="fas fa-chevron-right"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
         </div>
       </div>
@@ -808,15 +995,23 @@
               </span>
               <div class="card-actions">
                 <button class="card-action-btn" @click.stop="mostrarQR(bien)">
+<<<<<<< HEAD
                   <i class="fas fa-qrcode" />
                 </button>
                 <button class="card-action-btn" @click.stop="toggleDropdown(bien.id)">
                   <i class="fas fa-ellipsis-v" />
+=======
+                  <i class="fas fa-qrcode"></i>
+                </button>
+                <button class="card-action-btn" @click.stop="toggleDropdown(bien.id)">
+                  <i class="fas fa-ellipsis-v"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </button>
               </div>
             </div>
             
             <div class="card-body">
+<<<<<<< HEAD
               <h3 class="card-title">
                 {{ bien.nombre }}
               </h3>
@@ -839,6 +1034,26 @@
                 </div>
                 <div class="detail-item">
                   <i class="fas fa-dollar-sign" />
+=======
+              <h3 class="card-title">{{ bien.nombre }}</h3>
+              <p class="card-subtitle">{{ bien.marca }} {{ bien.modelo }}</p>
+              
+              <div class="card-details">
+                <div class="detail-item">
+                  <i class="fas fa-barcode"></i>
+                  <span>{{ bien.codigo }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-tag"></i>
+                  <span>{{ bien.categoria }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>{{ bien.ubicacion }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-dollar-sign"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   <span>${{ bien.valor.toLocaleString() }}</span>
                 </div>
               </div>
@@ -848,16 +1063,24 @@
               <small>Asignado: {{ formatearFecha(bien.fechaAsignacion) }}</small>
               <div class="card-footer-actions">
                 <button class="footer-btn" @click.stop="solicitarMantenimiento(bien)">
+<<<<<<< HEAD
                   <i class="fas fa-wrench" />
                 </button>
                 <button class="footer-btn" @click.stop="reportarProblema(bien)">
                   <i class="fas fa-exclamation-triangle" />
+=======
+                  <i class="fas fa-wrench"></i>
+                </button>
+                <button class="footer-btn" @click.stop="reportarProblema(bien)">
+                  <i class="fas fa-exclamation-triangle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </button>
               </div>
             </div>
 
             <!-- Dropdown menu para tarjetas -->
             <div v-if="dropdownAbierto === bien.id" class="card-dropdown-menu">
+<<<<<<< HEAD
               <a class="dropdown-item" @click.stop="imprimirEtiqueta(bien)">
                 <i class="fas fa-print" />
                 Imprimir Etiqueta
@@ -868,6 +1091,18 @@
               </a>
               <a class="dropdown-item" @click.stop="verHistorial(bien)">
                 <i class="fas fa-history" />
+=======
+              <a @click.stop="imprimirEtiqueta(bien)" class="dropdown-item">
+                <i class="fas fa-print"></i>
+                Imprimir Etiqueta
+              </a>
+              <a @click.stop="solicitarTraslado(bien)" class="dropdown-item">
+                <i class="fas fa-exchange-alt"></i>
+                Solicitar Traslado
+              </a>
+              <a @click.stop="verHistorial(bien)" class="dropdown-item">
+                <i class="fas fa-history"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Ver Historial
               </a>
             </div>
@@ -878,10 +1113,17 @@
         <div v-if="totalPaginas > 1" class="pagination">
           <button 
             :disabled="paginaActual === 1" 
+<<<<<<< HEAD
             class="pagination-btn"
             @click="irAPagina(paginaActual - 1)"
           >
             <i class="fas fa-chevron-left" />
+=======
+            @click="irAPagina(paginaActual - 1)"
+            class="pagination-btn"
+          >
+            <i class="fas fa-chevron-left"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
           
           <button
@@ -895,10 +1137,17 @@
           
           <button 
             :disabled="paginaActual === totalPaginas" 
+<<<<<<< HEAD
             class="pagination-btn"
             @click="irAPagina(paginaActual + 1)"
           >
             <i class="fas fa-chevron-right" />
+=======
+            @click="irAPagina(paginaActual + 1)"
+            class="pagination-btn"
+          >
+            <i class="fas fa-chevron-right"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
         </div>
       </div>
@@ -910,7 +1159,11 @@
         <div class="modal-header">
           <h3>Detalle del Bien</h3>
           <button class="modal-close" @click="cerrarModal">
+<<<<<<< HEAD
             <i class="fas fa-times" />
+=======
+            <i class="fas fa-times"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           </button>
         </div>
         <div class="modal-body">
@@ -958,11 +1211,17 @@
           </div>
         </div>
         <div class="modal-footer">
+<<<<<<< HEAD
           <button class="btn btn-outline" @click="cerrarModal">
             Cerrar
           </button>
           <button class="btn btn-primary" @click="imprimirDetalle">
             <i class="fas fa-print" />
+=======
+          <button class="btn btn-outline" @click="cerrarModal">Cerrar</button>
+          <button class="btn btn-primary" @click="imprimirDetalle">
+            <i class="fas fa-print"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
             Imprimir
           </button>
         </div>
@@ -972,13 +1231,463 @@
     <!-- Toast de notificaciones -->
     <transition name="slide-fade">
       <div v-if="toast.show" class="toast" :class="toast.type">
+<<<<<<< HEAD
         <i :class="toast.icon" />
+=======
+        <i :class="toast.icon"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         <span>{{ toast.message }}</span>
       </div>
     </transition>
   </div>
 </template>
 
+<<<<<<< HEAD
+=======
+<script>
+import { ref, computed, onMounted, reactive } from 'vue';
+
+export default {
+  name: 'MisBienesView',
+  props: {
+    usuario: {
+      type: Object,
+      required: true
+    },
+    bienes: {
+      type: Array,
+      default: () => []
+    }
+  },
+  emits: ['solicitar-mantenimiento', 'reportar-problema', 'solicitar-traslado'],
+  setup(props, { emit }) {
+    // Estado reactivo
+    const busqueda = ref('');
+    const filtroCategoria = ref('');
+    const filtroEstado = ref('');
+    const filtroUbicacion = ref('');
+    const vistaActual = ref('tabla');
+    const paginaActual = ref(1);
+    const itemsPorPagina = ref(10);
+    const ordenActual = ref({ campo: 'nombre', direccion: 'asc' });
+    const dropdownAbierto = ref(null);
+    const modalDetalle = ref(false);
+    const bienSeleccionado = ref(null);
+
+    // Toast de notificaciones
+    const toast = reactive({
+      show: false,
+      message: '',
+      type: 'info',
+      icon: 'fas fa-info-circle'
+    });
+
+    // Alertas
+    const alertas = ref([
+      {
+        id: 1,
+        tipo: 'warning',
+        icono: 'fas fa-exclamation-triangle',
+        mensaje: '3 bienes requieren mantenimiento preventivo este mes'
+      },
+      {
+        id: 2,
+        tipo: 'info',
+        icono: 'fas fa-info-circle',
+        mensaje: 'Recuerda verificar el estado de tus bienes mensualmente'
+      }
+    ]);
+
+    // Datos de ejemplo (en producción vendrían de props o API)
+    const bienesData = ref([
+      {
+        id: 1,
+        codigo: 'BN-2024-001',
+        nombre: 'Laptop Dell Latitude 7420',
+        marca: 'Dell',
+        modelo: 'Latitude 7420',
+        categoria: 'Equipos de Cómputo',
+        ubicacion: 'Oficina Principal - Piso 2',
+        estado: 'Excelente',
+        valor: 1200,
+        fechaAsignacion: '2024-01-15',
+        descripcion: 'Laptop empresarial con Windows 11 Pro'
+      },
+      {
+        id: 2,
+        codigo: 'BN-2024-002',
+        nombre: 'Monitor Samsung 27"',
+        marca: 'Samsung',
+        modelo: 'F27T450FQN',
+        categoria: 'Equipos de Cómputo',
+        ubicacion: 'Oficina Principal - Piso 2',
+        estado: 'Bueno',
+        valor: 350,
+        fechaAsignacion: '2024-01-15',
+        descripcion: 'Monitor LED Full HD'
+      },
+      {
+        id: 3,
+        codigo: 'BN-2023-045',
+        nombre: 'Silla Ejecutiva',
+        marca: 'Herman Miller',
+        modelo: 'Aeron',
+        categoria: 'Mobiliario',
+        ubicacion: 'Oficina Principal - Piso 2',
+        estado: 'Bueno',
+        valor: 800,
+        fechaAsignacion: '2023-08-10',
+        descripcion: 'Silla ergonómica con soporte lumbar'
+      },
+      {
+        id: 4,
+        codigo: 'BN-2023-067',
+        nombre: 'Impresora HP LaserJet',
+        marca: 'HP',
+        modelo: 'LaserJet Pro M404n',
+        categoria: 'Equipos de Oficina',
+        ubicacion: 'Oficina Principal - Piso 2',
+        estado: 'Regular',
+        valor: 250,
+        fechaAsignacion: '2023-09-20',
+        descripcion: 'Impresora láser monocromática'
+      },
+      {
+        id: 5,
+        codigo: 'BN-2024-023',
+        nombre: 'Teléfono IP',
+        marca: 'Cisco',
+        modelo: 'SPA504G',
+        categoria: 'Equipos de Comunicación',
+        ubicacion: 'Oficina Principal - Piso 2',
+        estado: 'En Mantenimiento',
+        valor: 180,
+        fechaAsignacion: '2024-02-28',
+        descripcion: 'Teléfono IP con 4 líneas'
+      }
+    ]);
+
+    // Computed properties
+    const totalBienes = computed(() => bienesData.value.length);
+    
+    const valorTotalFormatted = computed(() => {
+      const total = bienesData.value.reduce((sum, bien) => sum + bien.valor, 0);
+      return total.toLocaleString();
+    });
+
+    const categorias = computed(() => {
+      return [...new Set(bienesData.value.map(bien => bien.categoria))];
+    });
+
+    const ubicaciones = computed(() => {
+      return [...new Set(bienesData.value.map(bien => bien.ubicacion))];
+    });
+
+    const estadisticas = computed(() => {
+      const stats = { excelente: 0, bueno: 0, regular: 0, mantenimiento: 0 };
+      bienesData.value.forEach(bien => {
+        switch (bien.estado.toLowerCase()) {
+          case 'excelente':
+            stats.excelente++;
+            break;
+          case 'bueno':
+            stats.bueno++;
+            break;
+          case 'regular':
+            stats.regular++;
+            break;
+          case 'en mantenimiento':
+            stats.mantenimiento++;
+            break;
+        }
+      });
+      return stats;
+    });
+
+    const bienesFiltrados = computed(() => {
+      let resultado = [...bienesData.value];
+
+      // Filtro por búsqueda
+      if (busqueda.value) {
+        const termino = busqueda.value.toLowerCase();
+        resultado = resultado.filter(bien => 
+          bien.codigo.toLowerCase().includes(termino) ||
+          bien.nombre.toLowerCase().includes(termino) ||
+          bien.marca.toLowerCase().includes(termino) ||
+          bien.modelo.toLowerCase().includes(termino) ||
+          bien.descripcion.toLowerCase().includes(termino)
+        );
+      }
+
+      // Filtro por categoría
+      if (filtroCategoria.value) {
+        resultado = resultado.filter(bien => bien.categoria === filtroCategoria.value);
+      }
+
+      // Filtro por estado
+      if (filtroEstado.value) {
+        resultado = resultado.filter(bien => bien.estado === filtroEstado.value);
+      }
+
+      // Filtro por ubicación
+      if (filtroUbicacion.value) {
+        resultado = resultado.filter(bien => bien.ubicacion === filtroUbicacion.value);
+      }
+
+      // Ordenamiento
+      resultado.sort((a, b) => {
+        const { campo, direccion } = ordenActual.value;
+        let valorA = a[campo];
+        let valorB = b[campo];
+
+        if (typeof valorA === 'string') {
+          valorA = valorA.toLowerCase();
+          valorB = valorB.toLowerCase();
+        }
+
+        if (direccion === 'asc') {
+          return valorA > valorB ? 1 : -1;
+        } else {
+          return valorA < valorB ? 1 : -1;
+        }
+      });
+
+      return resultado;
+    });
+
+    const totalPaginas = computed(() => {
+      return Math.ceil(bienesFiltrados.value.length / itemsPorPagina.value);
+    });
+
+    const bienesPaginados = computed(() => {
+      const inicio = (paginaActual.value - 1) * itemsPorPagina.value;
+      const fin = inicio + itemsPorPagina.value;
+      return bienesFiltrados.value.slice(inicio, fin);
+    });
+
+    const paginasVisibles = computed(() => {
+      const total = totalPaginas.value;
+      const actual = paginaActual.value;
+      const visible = [];
+
+      if (total <= 7) {
+        for (let i = 1; i <= total; i++) {
+          visible.push(i);
+        }
+      } else {
+        visible.push(1);
+        if (actual > 4) visible.push('...');
+        
+        const inicio = Math.max(2, actual - 2);
+        const fin = Math.min(total - 1, actual + 2);
+        
+        for (let i = inicio; i <= fin; i++) {
+          visible.push(i);
+        }
+        
+        if (actual < total - 3) visible.push('...');
+        visible.push(total);
+      }
+
+      return visible;
+    });
+
+    // Métodos
+    const mostrarToast = (message, type = 'info') => {
+      const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-times-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+      };
+
+      toast.message = message;
+      toast.type = type;
+      toast.icon = icons[type];
+      toast.show = true;
+
+      setTimeout(() => {
+        toast.show = false;
+      }, 4000);
+    };
+
+    const filtrarBienes = () => {
+      paginaActual.value = 1; // Resetear a primera página al filtrar
+    };
+
+    const limpiarBusqueda = () => {
+      busqueda.value = '';
+      filtrarBienes();
+    };
+
+    const cambiarVista = (vista) => {
+      vistaActual.value = vista;
+    };
+
+    const cambiarPaginacion = () => {
+      paginaActual.value = 1;
+    };
+
+    const irAPagina = (pagina) => {
+      if (pagina >= 1 && pagina <= totalPaginas.value) {
+        paginaActual.value = pagina;
+      }
+    };
+
+    const ordenarPor = (campo) => {
+      if (ordenActual.value.campo === campo) {
+        ordenActual.value.direccion = ordenActual.value.direccion === 'asc' ? 'desc' : 'asc';
+      } else {
+        ordenActual.value = { campo, direccion: 'asc' };
+      }
+    };
+
+    const getSortIcon = (campo) => {
+      if (ordenActual.value.campo !== campo) {
+        return 'fas fa-sort text-muted';
+      }
+      return ordenActual.value.direccion === 'asc' 
+        ? 'fas fa-sort-up text-primary' 
+        : 'fas fa-sort-down text-primary';
+    };
+
+    const toggleDropdown = (id) => {
+      dropdownAbierto.value = dropdownAbierto.value === id ? null : id;
+    };
+
+    const formatearFecha = (fecha) => {
+      return new Date(fecha).toLocaleDateString('es-ES');
+    };
+
+    const verDetalleBien = (bien) => {
+      bienSeleccionado.value = bien;
+      modalDetalle.value = true;
+      dropdownAbierto.value = null;
+    };
+
+    const cerrarModal = () => {
+      modalDetalle.value = false;
+      bienSeleccionado.value = null;
+    };
+
+    const cerrarAlerta = (id) => {
+      alertas.value = alertas.value.filter(alerta => alerta.id !== id);
+    };
+
+    const solicitarMantenimiento = (bien) => {
+      emit('solicitar-mantenimiento', bien);
+      mostrarToast(`Solicitud de mantenimiento enviada para ${bien.nombre}`, 'success');
+      dropdownAbierto.value = null;
+    };
+
+    const reportarProblema = (bien) => {
+      emit('reportar-problema', bien);
+      mostrarToast(`Problema reportado para ${bien.nombre}`, 'warning');
+      dropdownAbierto.value = null;
+    };
+
+    const solicitarTraslado = (bien) => {
+      emit('solicitar-traslado', bien);
+      mostrarToast(`Solicitud de traslado enviada para ${bien.nombre}`, 'info');
+      dropdownAbierto.value = null;
+    };
+
+    const mostrarQR = (bien) => {
+      mostrarToast(`Código QR mostrado para ${bien.codigo}`, 'info');
+      dropdownAbierto.value = null;
+    };
+
+    const imprimirEtiqueta = (bien) => {
+      mostrarToast(`Imprimiendo etiqueta para ${bien.codigo}`, 'success');
+      dropdownAbierto.value = null;
+    };
+
+    const verHistorial = (bien) => {
+      mostrarToast(`Cargando historial de ${bien.nombre}`, 'info');
+      dropdownAbierto.value = null;
+    };
+
+    const exportarPDF = () => {
+      mostrarToast('Exportando lista de bienes a PDF...', 'info');
+    };
+
+    const exportarExcel = () => {
+      mostrarToast('Exportando lista de bienes a Excel...', 'info');
+    };
+
+    const abrirReportarIncidencia = () => {
+      mostrarToast('Abriendo formulario de incidencias...', 'info');
+    };
+
+    const imprimirDetalle = () => {
+      mostrarToast('Imprimiendo detalle del bien...', 'success');
+    };
+
+    // Lifecycle
+    onMounted(() => {
+      // Cerrar dropdown al hacer clic fuera
+      document.addEventListener('click', () => {
+        dropdownAbierto.value = null;
+      });
+    });
+
+    return {
+      // Estado
+      busqueda,
+      filtroCategoria,
+      filtroEstado,
+      filtroUbicacion,
+      vistaActual,
+      paginaActual,
+      itemsPorPagina,
+      ordenActual,
+      dropdownAbierto,
+      modalDetalle,
+      bienSeleccionado,
+      toast,
+      alertas,
+      
+      // Computed
+      totalBienes,
+      valorTotalFormatted,
+      categorias,
+      ubicaciones,
+      estadisticas,
+      bienesFiltrados,
+      totalPaginas,
+      bienesPaginados,
+      paginasVisibles,
+      
+      // Métodos
+      filtrarBienes,
+      limpiarBusqueda,
+      cambiarVista,
+      cambiarPaginacion,
+      irAPagina,
+      ordenarPor,
+      getSortIcon,
+      toggleDropdown,
+      formatearFecha,
+      verDetalleBien,
+      cerrarModal,
+      cerrarAlerta,
+      solicitarMantenimiento,
+      reportarProblema,
+      solicitarTraslado,
+      mostrarQR,
+      imprimirEtiqueta,
+      verHistorial,
+      exportarPDF,
+      exportarExcel,
+      abrirReportarIncidencia,
+      imprimirDetalle,
+      mostrarToast
+    };
+  }
+};
+</script>
+
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
 <style scoped>
 * {
   margin: 0;

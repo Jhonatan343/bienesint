@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script>
   import { ref, computed, reactive, onMounted } from 'vue';
 
@@ -383,6 +384,8 @@
   };
 </script>
 
+=======
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
 <template>
   <div class="perfil-container">
     <!-- Header del perfil -->
@@ -401,27 +404,46 @@
                 {{ getInitials(usuario.nombre) }}
               </div>
               <button class="avatar-edit-btn" @click="cambiarAvatar">
+<<<<<<< HEAD
                 <i class="fas fa-camera" />
+=======
+                <i class="fas fa-camera"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               </button>
             </div>
           </div>
           
           <div class="user-info">
+<<<<<<< HEAD
             <h1 class="user-name">
               {{ usuario.nombre }}
             </h1>
             <div class="user-details">
               <span class="user-role" :class="usuario.rol.toLowerCase()">
                 <i :class="getRoleIcon(usuario.rol)" />
+=======
+            <h1 class="user-name">{{ usuario.nombre }}</h1>
+            <div class="user-details">
+              <span class="user-role" :class="usuario.rol.toLowerCase()">
+                <i :class="getRoleIcon(usuario.rol)"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 {{ usuario.rol }}
               </span>
               <span class="user-department">{{ usuario.departamento }}</span>
               <span class="user-status" :class="usuario.estado.toLowerCase()">
+<<<<<<< HEAD
                 <i class="fas fa-circle" />
                 {{ usuario.estado }}
               </span>
             </div>
             <div v-if="isAdmin" class="user-stats">
+=======
+                <i class="fas fa-circle"></i>
+                {{ usuario.estado }}
+              </span>
+            </div>
+            <div class="user-stats" v-if="isAdmin">
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               <div class="stat-item">
                 <span class="stat-number">{{ estadisticasAdmin.usuariosGestionados }}</span>
                 <span class="stat-label">Usuarios Gestionados</span>
@@ -435,7 +457,11 @@
                 <span class="stat-label">Reportes Generados</span>
               </div>
             </div>
+<<<<<<< HEAD
             <div v-else class="user-stats">
+=======
+            <div class="user-stats" v-else>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               <div class="stat-item">
                 <span class="stat-number">{{ estadisticasUsuario.bienesAsignados }}</span>
                 <span class="stat-label">Bienes Asignados</span>
@@ -453,11 +479,19 @@
 
           <div class="header-actions">
             <button class="btn btn-outline" @click="exportarPerfil">
+<<<<<<< HEAD
               <i class="fas fa-download" />
               Exportar Perfil
             </button>
             <button class="btn btn-primary" @click="editarPerfil">
               <i class="fas fa-edit" />
+=======
+              <i class="fas fa-download"></i>
+              Exportar Perfil
+            </button>
+            <button class="btn btn-primary" @click="editarPerfil">
+              <i class="fas fa-edit"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               Editar Perfil
             </button>
           </div>
@@ -474,7 +508,11 @@
           :class="['tab-btn', { active: tabActivo === tab.id }]"
           @click="cambiarTab(tab.id)"
         >
+<<<<<<< HEAD
           <i :class="tab.icon" />
+=======
+          <i :class="tab.icon"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
           {{ tab.label }}
         </button>
       </div>
@@ -488,11 +526,19 @@
           <div class="info-card">
             <div class="card-header">
               <h3>
+<<<<<<< HEAD
                 <i class="fas fa-user" />
                 Información Personal
               </h3>
               <button class="edit-btn" @click="editarInformacionPersonal">
                 <i class="fas fa-edit" />
+=======
+                <i class="fas fa-user"></i>
+                Información Personal
+              </h3>
+              <button class="edit-btn" @click="editarInformacionPersonal">
+                <i class="fas fa-edit"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               </button>
             </div>
             <div class="card-body">
@@ -528,7 +574,11 @@
           <div class="info-card">
             <div class="card-header">
               <h3>
+<<<<<<< HEAD
                 <i class="fas fa-briefcase" />
+=======
+                <i class="fas fa-briefcase"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Información Laboral
               </h3>
             </div>
@@ -569,7 +619,11 @@
         <div class="bienes-summary-card">
           <div class="card-header">
             <h3>
+<<<<<<< HEAD
               <i class="fas fa-box" />
+=======
+              <i class="fas fa-box"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               Mis Bienes Asignados
             </h3>
             <div class="header-actions">
@@ -577,7 +631,11 @@
                 Ver Todos
               </button>
               <button class="btn btn-primary" @click="solicitarNuevoBien">
+<<<<<<< HEAD
                 <i class="fas fa-plus" />
+=======
+                <i class="fas fa-plus"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Solicitar Bien
               </button>
             </div>
@@ -587,7 +645,11 @@
             <div class="bienes-stats">
               <div class="stat-box excellent">
                 <div class="stat-icon">
+<<<<<<< HEAD
                   <i class="fas fa-check-circle" />
+=======
+                  <i class="fas fa-check-circle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </div>
                 <div class="stat-info">
                   <span class="stat-number">{{ estadisticasBienes.excelente }}</span>
@@ -596,7 +658,11 @@
               </div>
               <div class="stat-box good">
                 <div class="stat-icon">
+<<<<<<< HEAD
                   <i class="fas fa-thumbs-up" />
+=======
+                  <i class="fas fa-thumbs-up"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </div>
                 <div class="stat-info">
                   <span class="stat-number">{{ estadisticasBienes.bueno }}</span>
@@ -605,7 +671,11 @@
               </div>
               <div class="stat-box regular">
                 <div class="stat-icon">
+<<<<<<< HEAD
                   <i class="fas fa-exclamation-circle" />
+=======
+                  <i class="fas fa-exclamation-circle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </div>
                 <div class="stat-info">
                   <span class="stat-number">{{ estadisticasBienes.regular }}</span>
@@ -614,7 +684,11 @@
               </div>
               <div class="stat-box maintenance">
                 <div class="stat-icon">
+<<<<<<< HEAD
                   <i class="fas fa-tools" />
+=======
+                  <i class="fas fa-tools"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </div>
                 <div class="stat-info">
                   <span class="stat-number">{{ estadisticasBienes.mantenimiento }}</span>
@@ -629,7 +703,11 @@
               <div class="bienes-list">
                 <div v-for="bien in bienesRecientes" :key="bien.id" class="bien-item">
                   <div class="bien-icon">
+<<<<<<< HEAD
                     <i :class="getBienIcon(bien.categoria)" />
+=======
+                    <i :class="getBienIcon(bien.categoria)"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </div>
                   <div class="bien-info">
                     <span class="bien-name">{{ bien.nombre }}</span>
@@ -642,10 +720,17 @@
                   </div>
                   <div class="bien-actions">
                     <button class="action-btn" @click="verDetalleBien(bien)">
+<<<<<<< HEAD
                       <i class="fas fa-eye" />
                     </button>
                     <button class="action-btn" @click="reportarProblema(bien)">
                       <i class="fas fa-exclamation-triangle" />
+=======
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn" @click="reportarProblema(bien)">
+                      <i class="fas fa-exclamation-triangle"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                     </button>
                   </div>
                 </div>
@@ -661,7 +746,11 @@
           <div class="info-card">
             <div class="card-header">
               <h3>
+<<<<<<< HEAD
                 <i class="fas fa-cogs" />
+=======
+                <i class="fas fa-cogs"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Panel de Administración
               </h3>
             </div>
@@ -669,7 +758,11 @@
               <div class="admin-actions-grid">
                 <button class="admin-action-card" @click="gestionarUsuarios">
                   <div class="action-icon">
+<<<<<<< HEAD
                     <i class="fas fa-users" />
+=======
+                    <i class="fas fa-users"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </div>
                   <div class="action-info">
                     <span class="action-title">Gestionar Usuarios</span>
@@ -679,7 +772,11 @@
 
                 <button class="admin-action-card" @click="gestionarBienes">
                   <div class="action-icon">
+<<<<<<< HEAD
                     <i class="fas fa-box" />
+=======
+                    <i class="fas fa-box"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </div>
                   <div class="action-info">
                     <span class="action-title">Gestionar Bienes</span>
@@ -689,7 +786,11 @@
 
                 <button class="admin-action-card" @click="verReportes">
                   <div class="action-icon">
+<<<<<<< HEAD
                     <i class="fas fa-chart-bar" />
+=======
+                    <i class="fas fa-chart-bar"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </div>
                   <div class="action-info">
                     <span class="action-title">Reportes y Análisis</span>
@@ -699,7 +800,11 @@
 
                 <button class="admin-action-card" @click="configurarSistema">
                   <div class="action-icon">
+<<<<<<< HEAD
                     <i class="fas fa-sliders-h" />
+=======
+                    <i class="fas fa-sliders-h"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </div>
                   <div class="action-info">
                     <span class="action-title">Configuración</span>
@@ -713,7 +818,11 @@
           <div class="info-card">
             <div class="card-header">
               <h3>
+<<<<<<< HEAD
                 <i class="fas fa-shield-alt" />
+=======
+                <i class="fas fa-shield-alt"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Permisos y Roles
               </h3>
             </div>
@@ -721,7 +830,11 @@
               <div class="permissions-list">
                 <div v-for="permiso in permisosAdmin" :key="permiso.id" class="permission-item">
                   <div class="permission-icon">
+<<<<<<< HEAD
                     <i :class="permiso.icono" :style="{ color: permiso.activo ? '#10b981' : '#6b7280' }" />
+=======
+                    <i :class="permiso.icono" :style="{ color: permiso.activo ? '#10b981' : '#6b7280' }"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </div>
                   <div class="permission-info">
                     <span class="permission-name">{{ permiso.nombre }}</span>
@@ -744,11 +857,16 @@
         <div class="info-card">
           <div class="card-header">
             <h3>
+<<<<<<< HEAD
               <i class="fas fa-history" />
+=======
+              <i class="fas fa-history"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               Actividad Reciente
             </h3>
             <div class="header-actions">
               <select v-model="filtroActividad" class="filter-select">
+<<<<<<< HEAD
                 <option value="todas">
                   Todas las actividades
                 </option>
@@ -764,6 +882,13 @@
                 <option value="mantenimiento">
                   Mantenimiento
                 </option>
+=======
+                <option value="todas">Todas las actividades</option>
+                <option value="bienes">Gestión de bienes</option>
+                <option value="solicitudes">Solicitudes</option>
+                <option value="reportes">Reportes</option>
+                <option value="mantenimiento">Mantenimiento</option>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
               </select>
             </div>
           </div>
@@ -771,16 +896,24 @@
             <div class="activity-timeline">
               <div v-for="actividad in actividadesFiltradas" :key="actividad.id" class="timeline-item">
                 <div class="timeline-marker" :class="actividad.tipo">
+<<<<<<< HEAD
                   <i :class="actividad.icono" />
+=======
+                  <i :class="actividad.icono"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 </div>
                 <div class="timeline-content">
                   <div class="timeline-header">
                     <span class="timeline-title">{{ actividad.titulo }}</span>
                     <span class="timeline-date">{{ formatearFechaCompleta(actividad.fecha) }}</span>
                   </div>
+<<<<<<< HEAD
                   <p class="timeline-description">
                     {{ actividad.descripcion }}
                   </p>
+=======
+                  <p class="timeline-description">{{ actividad.descripcion }}</p>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   <div v-if="actividad.detalles" class="timeline-details">
                     <span v-for="detalle in actividad.detalles" :key="detalle" class="detail-tag">
                       {{ detalle }}
@@ -799,7 +932,11 @@
           <div class="info-card">
             <div class="card-header">
               <h3>
+<<<<<<< HEAD
                 <i class="fas fa-user-cog" />
+=======
+                <i class="fas fa-user-cog"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Configuración de Cuenta
               </h3>
             </div>
@@ -821,8 +958,13 @@
                     <span class="config-desc">Protege tu cuenta con 2FA</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracion.dosFactores" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracion.dosFactores">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
               </div>
@@ -835,8 +977,13 @@
                     <span class="config-desc">Recibir notificaciones importantes</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracion.emailNotificaciones" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracion.emailNotificaciones">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
                 <div class="config-item">
@@ -845,8 +992,13 @@
                     <span class="config-desc">Alertas sobre bienes que requieren mantenimiento</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracion.recordatoriosMantenimiento" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracion.recordatoriosMantenimiento">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
                 <div class="config-item">
@@ -855,8 +1007,13 @@
                     <span class="config-desc">Recibir resumen de actividades semanalmente</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracion.resumenSemanal" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracion.resumenSemanal">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
               </div>
@@ -869,8 +1026,13 @@
                     <span class="config-desc">Permitir que otros usuarios vean tu información básica</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracion.perfilPublico" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracion.perfilPublico">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
               </div>
@@ -890,7 +1052,11 @@
           <div v-if="isAdmin" class="info-card">
             <div class="card-header">
               <h3>
+<<<<<<< HEAD
                 <i class="fas fa-tools" />
+=======
+                <i class="fas fa-tools"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                 Configuración del Sistema
               </h3>
             </div>
@@ -903,8 +1069,13 @@
                     <span class="config-desc">Activar modo mantenimiento del sistema</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracionSistema.modoMantenimiento" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracionSistema.modoMantenimiento">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
                 <div class="config-item">
@@ -913,8 +1084,13 @@
                     <span class="config-desc">Mantener logs detallados de actividades</span>
                   </div>
                   <label class="toggle-switch">
+<<<<<<< HEAD
                     <input v-model="configuracionSistema.registroAuditoria" type="checkbox">
                     <span class="toggle-slider" />
+=======
+                    <input type="checkbox" v-model="configuracionSistema.registroAuditoria">
+                    <span class="toggle-slider"></span>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   </label>
                 </div>
               </div>
@@ -934,7 +1110,11 @@
 
               <div class="config-actions">
                 <button class="btn btn-danger" @click="exportarDatos">
+<<<<<<< HEAD
                   <i class="fas fa-download" />
+=======
+                  <i class="fas fa-download"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
                   Exportar Datos del Sistema
                 </button>
               </div>
@@ -947,13 +1127,405 @@
     <!-- Toast de notificaciones -->
     <transition name="slide-fade">
       <div v-if="toast.show" class="toast" :class="toast.type">
+<<<<<<< HEAD
         <i :class="toast.icon" />
+=======
+        <i :class="toast.icon"></i>
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
         <span>{{ toast.message }}</span>
       </div>
     </transition>
   </div>
 </template>
 
+<<<<<<< HEAD
+=======
+<script>
+import { ref, computed, reactive, onMounted } from 'vue';
+
+export default {
+  name: 'PerfilUsuarioView',
+  props: {
+    usuario: {
+      type: Object,
+      required: true
+    }
+  },
+  emits: ['editar-perfil', 'cambiar-avatar', 'cambiar-password'],
+  setup(props, { emit }) {
+    const tabActivo = ref('personal');
+    const filtroActividad = ref('todas');
+
+    // Toast de notificaciones
+    const toast = reactive({
+      show: false,
+      message: '',
+      type: 'info',
+      icon: 'fas fa-info-circle'
+    });
+
+    // Configuración del usuario
+    const configuracion = reactive({
+      dosFactores: false,
+      emailNotificaciones: true,
+      recordatoriosMantenimiento: true,
+      resumenSemanal: false,
+      perfilPublico: true
+    });
+
+    // Configuración del sistema (solo admin)
+    const configuracionSistema = reactive({
+      modoMantenimiento: false,
+      registroAuditoria: true,
+      ultimoRespaldo: '2024-06-15'
+    });
+
+    // Datos de ejemplo - en producción vendrían de props o API
+    const estadisticasUsuario = ref({
+      bienesAsignados: 8,
+      valorBienes: 4250,
+      solicitudesPendientes: 2
+    });
+
+    const estadisticasAdmin = ref({
+      usuariosGestionados: 145,
+      bienesTotales: 1247,
+      reportesGenerados: 89
+    });
+
+    const estadisticasBienes = ref({
+      excelente: 5,
+      bueno: 2,
+      regular: 1,
+      mantenimiento: 0
+    });
+
+    const bienesRecientes = ref([
+      {
+        id: 1,
+        nombre: 'Laptop Dell Latitude',
+        codigo: 'BN-2024-001',
+        categoria: 'Equipos de Cómputo',
+        estado: 'Excelente'
+      },
+      {
+        id: 2,
+        nombre: 'Monitor Samsung 27"',
+        codigo: 'BN-2024-002',
+        categoria: 'Equipos de Cómputo',
+        estado: 'Bueno'
+      },
+      {
+        id: 3,
+        nombre: 'Silla Ejecutiva',
+        codigo: 'BN-2023-045',
+        categoria: 'Mobiliario',
+        estado: 'Bueno'
+      }
+    ]);
+
+    const actividades = ref([
+      {
+        id: 1,
+        tipo: 'success',
+        icono: 'fas fa-plus',
+        titulo: 'Bien asignado',
+        descripcion: 'Se te asignó una nueva laptop Dell Latitude 7420',
+        fecha: '2024-06-18T10:30:00',
+        detalles: ['BN-2024-001', 'Equipos de Cómputo']
+      },
+      {
+        id: 2,
+        tipo: 'warning',
+        icono: 'fas fa-wrench',
+        titulo: 'Mantenimiento solicitado',
+        descripcion: 'Solicitud de mantenimiento para impresora HP LaserJet',
+        fecha: '2024-06-17T14:15:00',
+        detalles: ['BN-2023-067', 'Mantenimiento Preventivo']
+      },
+      {
+        id: 3,
+        tipo: 'info',
+        icono: 'fas fa-file-alt',
+        titulo: 'Reporte generado',
+        descripcion: 'Generaste un reporte de inventario personal',
+        fecha: '2024-06-16T09:20:00',
+        detalles: ['Reporte PDF', '8 bienes']
+      },
+      {
+        id: 4,
+        tipo: 'error',
+        icono: 'fas fa-exclamation-triangle',
+        titulo: 'Problema reportado',
+        descripcion: 'Reportaste un problema con el teléfono IP',
+        fecha: '2024-06-15T16:45:00',
+        detalles: ['BN-2024-023', 'Problema Técnico']
+      }
+    ]);
+
+    const permisosAdmin = ref([
+      {
+        id: 1,
+        nombre: 'Gestión de Usuarios',
+        descripcion: 'Crear, editar y eliminar usuarios',
+        icono: 'fas fa-users',
+        activo: true
+      },
+      {
+        id: 2,
+        nombre: 'Gestión de Bienes',
+        descripcion: 'Administrar inventario completo',
+        icono: 'fas fa-box',
+        activo: true
+      },
+      {
+        id: 3,
+        nombre: 'Reportes Avanzados',
+        descripcion: 'Generar reportes del sistema',
+        icono: 'fas fa-chart-bar',
+        activo: true
+      },
+      {
+        id: 4,
+        nombre: 'Configuración Sistema',
+        descripcion: 'Modificar configuraciones globales',
+        icono: 'fas fa-cogs',
+        activo: true
+      },
+      {
+        id: 5,
+        nombre: 'Auditoría',
+        descripcion: 'Acceso a logs y auditoría',
+        icono: 'fas fa-shield-alt',
+        activo: false
+      }
+    ]);
+
+    // Computed properties
+    const isAdmin = computed(() => props.usuario.rol === 'Administrador');
+
+    const availableTabs = computed(() => {
+      const baseTabs = [
+        { id: 'personal', label: 'Información Personal', icon: 'fas fa-user' },
+        { id: 'actividad', label: 'Actividad', icon: 'fas fa-history' },
+        { id: 'configuracion', label: 'Configuración', icon: 'fas fa-cog' }
+      ];
+
+      if (isAdmin.value) {
+        baseTabs.splice(1, 0, { id: 'gestion', label: 'Gestión del Sistema', icon: 'fas fa-tools' });
+      } else {
+        baseTabs.splice(1, 0, { id: 'bienes', label: 'Mis Bienes', icon: 'fas fa-box' });
+      }
+
+      return baseTabs;
+    });
+
+    const actividadesFiltradas = computed(() => {
+      if (filtroActividad.value === 'todas') {
+        return actividades.value;
+      }
+      return actividades.value.filter(actividad => 
+        actividad.detalles.some(detalle => 
+          detalle.toLowerCase().includes(filtroActividad.value.toLowerCase())
+        )
+      );
+    });
+
+    // Métodos
+    const mostrarToast = (message, type = 'info') => {
+      const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-times-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+      };
+
+      toast.message = message;
+      toast.type = type;
+      toast.icon = icons[type];
+      toast.show = true;
+
+      setTimeout(() => {
+        toast.show = false;
+      }, 4000);
+    };
+
+    const getInitials = (nombre) => {
+      return nombre
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    };
+
+    const getRoleIcon = (rol) => {
+      const icons = {
+        'Administrador': 'fas fa-crown',
+        'Usuario': 'fas fa-user',
+        'Supervisor': 'fas fa-user-tie',
+        'Gerente': 'fas fa-briefcase'
+      };
+      return icons[rol] || 'fas fa-user';
+    };
+
+    const getBienIcon = (categoria) => {
+      const icons = {
+        'Equipos de Cómputo': 'fas fa-laptop',
+        'Mobiliario': 'fas fa-chair',
+        'Equipos de Oficina': 'fas fa-print',
+        'Vehículos': 'fas fa-car',
+        'Maquinaria': 'fas fa-cogs'
+      };
+      return icons[categoria] || 'fas fa-box';
+    };
+
+    const formatearFecha = (fecha) => {
+      return new Date(fecha).toLocaleDateString('es-ES');
+    };
+
+    const formatearFechaCompleta = (fecha) => {
+      return new Date(fecha).toLocaleString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+
+    const cambiarTab = (tab) => {
+      tabActivo.value = tab;
+    };
+
+    const cambiarAvatar = () => {
+      emit('cambiar-avatar');
+      mostrarToast('Abriendo selector de avatar...', 'info');
+    };
+
+    const editarPerfil = () => {
+      emit('editar-perfil');
+      mostrarToast('Abriendo editor de perfil...', 'info');
+    };
+
+    const exportarPerfil = () => {
+      mostrarToast('Exportando información del perfil...', 'success');
+    };
+
+    const editarInformacionPersonal = () => {
+      mostrarToast('Abriendo editor de información personal...', 'info');
+    };
+
+    const cambiarPassword = () => {
+      emit('cambiar-password');
+      mostrarToast('Abriendo formulario de cambio de contraseña...', 'info');
+    };
+
+    const guardarConfiguracion = () => {
+      mostrarToast('Configuración guardada exitosamente', 'success');
+    };
+
+    const resetearConfiguracion = () => {
+      configuracion.dosFactores = false;
+      configuracion.emailNotificaciones = true;
+      configuracion.recordatoriosMantenimiento = true;
+      configuracion.resumenSemanal = false;
+      configuracion.perfilPublico = true;
+      mostrarToast('Configuración restaurada a valores predeterminados', 'info');
+    };
+
+    // Métodos específicos para usuarios regulares
+    const verTodosBienes = () => {
+      mostrarToast('Navegando a la vista completa de bienes...', 'info');
+    };
+
+    const solicitarNuevoBien = () => {
+      mostrarToast('Abriendo formulario de solicitud de bien...', 'info');
+    };
+
+    const verDetalleBien = (bien) => {
+      mostrarToast(`Viendo detalles de ${bien.nombre}`, 'info');
+    };
+
+    const reportarProblema = (bien) => {
+      mostrarToast(`Reportando problema para ${bien.nombre}`, 'warning');
+    };
+
+    // Métodos específicos para administradores
+    const gestionarUsuarios = () => {
+      mostrarToast('Navegando a gestión de usuarios...', 'info');
+    };
+
+    const gestionarBienes = () => {
+      mostrarToast('Navegando a gestión de bienes...', 'info');
+    };
+
+    const verReportes = () => {
+      mostrarToast('Abriendo panel de reportes...', 'info');
+    };
+
+    const configurarSistema = () => {
+      mostrarToast('Abriendo configuración del sistema...', 'info');
+    };
+
+    const ejecutarRespaldo = () => {
+      mostrarToast('Ejecutando respaldo del sistema...', 'warning');
+    };
+
+    const exportarDatos = () => {
+      mostrarToast('Exportando datos del sistema...', 'info');
+    };
+
+    return {
+      // Estado
+      tabActivo,
+      filtroActividad,
+      toast,
+      configuracion,
+      configuracionSistema,
+      estadisticasUsuario,
+      estadisticasAdmin,
+      estadisticasBienes,
+      bienesRecientes,
+      actividades,
+      permisosAdmin,
+
+      // Computed
+      isAdmin,
+      availableTabs,
+      actividadesFiltradas,
+
+      // Métodos
+      mostrarToast,
+      getInitials,
+      getRoleIcon,
+      getBienIcon,
+      formatearFecha,
+      formatearFechaCompleta,
+      cambiarTab,
+      cambiarAvatar,
+      editarPerfil,
+      exportarPerfil,
+      editarInformacionPersonal,
+      cambiarPassword,
+      guardarConfiguracion,
+      resetearConfiguracion,
+      verTodosBienes,
+      solicitarNuevoBien,
+      verDetalleBien,
+      reportarProblema,
+      gestionarUsuarios,
+      gestionarBienes,
+      verReportes,
+      configurarSistema,
+      ejecutarRespaldo,
+      exportarDatos
+    };
+  }
+};
+</script>
+
+>>>>>>> b3adc8835ea2620deb568d9442a71eff9b6a443e
 <style scoped>
 * {
   margin: 0;

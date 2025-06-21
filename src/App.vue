@@ -1,10 +1,8 @@
 <template>
   <div id="app">
-    <!-- Barra de navegación ocupa todo el ancho -->
+    <!-- Barra de navegación siempre visible -->
     <NavigationBar :logo="logo" />
-
-    <!-- Contenedor centrado para las vistas -->
-    <div class="content-container">
+    <div class="content-container" :class="{ 'no-padding': $route.path === '/login' }">
       <router-view />
     </div>
   </div>
@@ -49,6 +47,24 @@ export default {
   margin: 0 auto;
   padding: 0 var(--spacing-md);
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+.content-container.no-padding {
+  padding: 0;
+  max-width: 100vw;
+}
+
+/* Corrige el z-index de la barra de navegación para que esté por encima del login */
+.navigation-bar {
+  z-index: 1002 !important;
+  position: relative;
+}
+
+/* Corrige el z-index del login para que no tape la barra */
+.login-page {
+  z-index: 1 !important;
+  position: relative !important;
 }
 </style>
 

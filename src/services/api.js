@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Configuración base de axios
-const API_BASE_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.VUE_APP_API_URL || 'http://localhost:3001/api';
 
 console.log('🔧 API Service configurado con URL:', API_BASE_URL);
 

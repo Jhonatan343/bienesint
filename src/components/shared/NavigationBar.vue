@@ -6,9 +6,9 @@
       <div class="nav-pattern"></div>
     </div>
 
-    <!-- Logo: clic lleva a "/" (Dashboard) -->
+    <!-- Logo: clic lleva a "/inicio" (InicioView) -->
     <div class="logo">
-      <router-link to="/">
+      <router-link to="/inicio">
         <div class="logo-container">
           <div class="logo-glow"></div>
           <img :src="logo" alt="Instituto Nelson Torres" class="logo-image" />
@@ -18,11 +18,16 @@
 
     <!-- Menú de navegación -->
     <ul class="nav-list">
-      <li><router-link to="/" exact>Inicio</router-link></li>
-      <li><router-link to="/assets">Bienes</router-link></li>
-      <li><router-link to="/areas">Áreas</router-link></li>
-      <li><router-link to="/users">Usuarios</router-link></li>
-      <li><router-link to="/reports">Reportes</router-link></li>
+      <li><router-link to="/inicio">Inicio</router-link></li>
+      <li><router-link to="/contactos">Contactos</router-link></li>
+      <li v-if="!isAuthenticated"><router-link to="/login">Login</router-link></li>
+      <li v-if="isAuthenticated"><router-link to="/dashboard">Dashboard</router-link></li>
+      <li v-if="isAuthenticated"><router-link to="/assets">Bienes</router-link></li>
+      <li v-if="isAuthenticated"><router-link to="/areas">Áreas</router-link></li>
+      <li v-if="isAuthenticated"><router-link to="/users">Usuarios</router-link></li>
+      <li v-if="isAuthenticated"><router-link to="/reports">Reportes</router-link></li>
+      <li v-if="isAuthenticated"><router-link to="/perfil">Perfil</router-link></li>
+      <li v-if="isAuthenticated"><a href="#" @click.prevent="logout">Cerrar sesión</a></li>
     </ul>
   </nav>
 </template>
@@ -36,6 +41,36 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isAuthenticated: false
+    };
+  },
+  mounted() {
+    this.syncAuth();
+  },
+  watch: {
+    '$route.path'() {
+      this.syncAuth();
+    }
+  },
+  created() {
+    window.addEventListener('storage', this.syncAuth);
+  },
+  beforeUnmount() {
+    window.removeEventListener('storage', this.syncAuth);
+  },
+  methods: {
+    syncAuth() {
+      this.isAuthenticated = !!localStorage.getItem('auth_token');
+    },
+    logout() {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      this.isAuthenticated = false;
+      this.$router.push('/login');
+    }
+  }
 };
 </script>
 

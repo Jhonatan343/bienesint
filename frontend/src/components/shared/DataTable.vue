@@ -232,20 +232,20 @@
               </div>
             </th>
 
-            <!-- Columna de acciones -->
-            <th
-              v-if="hasActions"
-              class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-            >
-              Acciones
-            </th>
-
             <!-- Columna QR -->
             <th
               v-if="showQR"
               class="w-20 px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
             >
               QR
+            </th>
+
+            <!-- Columna de acciones -->
+            <th
+              v-if="hasActions"
+              class="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+            >
+              Acciones
             </th>
           </tr>
         </thead>
@@ -338,6 +338,17 @@
               </slot>
             </td>
 
+            <!-- Celda QR -->
+            <td v-if="showQR" class="px-6 py-4 whitespace-nowrap text-center">
+              <button
+                @click="showQRModal(item)"
+                class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-all duration-200 transform hover:scale-110"
+                title="Ver código QR"
+              >
+                <i class="bx bx-qr text-xl"></i>
+              </button>
+            </td>
+
             <!-- Celda de acciones -->
             <td v-if="hasActions" class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <slot name="actions" :item="item" :index="index">
@@ -362,17 +373,6 @@
                   </button>
                 </div>
               </slot>
-            </td>
-
-            <!-- Celda QR -->
-            <td v-if="showQR" class="px-6 py-4 whitespace-nowrap text-center">
-              <button
-                @click="showQRModal(item)"
-                class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-all duration-200 transform hover:scale-110"
-                title="Ver código QR"
-              >
-                <i class="bx bx-qr text-xl"></i>
-              </button>
             </td>
           </tr>
         </tbody>

@@ -195,17 +195,6 @@
         </span>
       </template>
 
-      <template #cell-codigo_qr="{ value, item }">
-        <div class="flex items-center justify-center">
-          <button
-            @click="generarQR(item)"
-            class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-lg transition-all duration-200 transform hover:scale-110"
-            :title="value ? 'Ver código QR' : 'Generar código QR'"
-          >
-            <i class="bx bx-qr text-xl"></i>
-          </button>
-        </div>
-      </template>
 
       <template #cell-estado="{ value }">
         <span class="px-2 py-1 text-xs font-semibold rounded-full" :class="getEstadoClass(value)">
@@ -219,14 +208,14 @@
         </span>
       </template>
 
-      <template #cell-responsable="{ value }">
+      <template #cell-responsable_completo="{ value }">
         <div class="flex items-center space-x-2">
           <div
             class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center"
           >
             <i class="bx bx-user text-primary-600 dark:text-primary-400"></i>
           </div>
-          <span class="text-sm font-medium">{{ value?.nombre || 'Sin asignar' }}</span>
+          <span class="text-sm font-medium">{{ value || 'Sin asignar' }}</span>
         </div>
       </template>
 
@@ -644,8 +633,6 @@ const columns: DataTableColumn[] = [
   { key: 'valor_adquisicion', label: 'Valor', sortable: true },
   { key: 'responsable_completo', label: 'Responsable', sortable: true },
   { key: 'fecha_adquisicion', label: 'Fecha Adquisición', sortable: true },
-  { key: 'acciones', label: 'Acciones', sortable: false },
-  { key: 'codigo_qr', label: 'QR', sortable: false },
 ]
 
 // Métodos
@@ -657,12 +644,20 @@ const cargarBienes = async () => {
       // Si la respuesta es paginada, usar response.data.data, sino usar response.data directamente
       const bienesData = Array.isArray(response.data) ? response.data : response.data.data || []
       
-      // Agregar campo de responsable completo
+      // Agregar campos calculados para mejor búsqueda y visualización
       bienes.value = bienesData.map(bien => ({
         ...bien,
         responsable_completo: bien.responsable ? 
           `${bien.responsable.nombre || ''} ${bien.responsable.apellido || ''}`.trim() || 
-          'Sin asignar' : 'Sin asignar'
+          'Sin asignar' : 'Sin asignar',
+        categoria: {
+          ...bien.categoria,
+          nombre: bien.categoria?.nombre || bien.categoria_nombre || 'Sin categoría'
+        },
+        ubicacion: {
+          ...bien.ubicacion,
+          nombre: bien.ubicacion?.nombre || bien.ubicacion_nombre || 'Sin ubicación'
+        }
       }))
       
       toast.success('Bienes cargados correctamente')
@@ -873,6 +868,10 @@ const formatCurrency = (value: number) => {
     currency: 'USD',
     minimumFractionDigits: 2,
   }).format(value)
+}
+
+const showQRModal = (item: Asset) => {
+  generarQR(item)
 }
 
 const generarQR = async (bien: Asset) => {

@@ -1537,6 +1537,8 @@ router.post("/bienes", verifyToken, async (req, res) => {
       ubicacion_id,
       responsable_id,
       observaciones,
+      color,
+      material,
     } = req.body;
 
     if (!codigo_institucional || !codigo_senescyt || !nombre || !categoria_id) {
@@ -1563,9 +1565,9 @@ router.post("/bienes", verifyToken, async (req, res) => {
     const result = await query(
       `INSERT INTO bienes (
         codigo_institucional, codigo_senescyt, nombre, descripcion, marca, modelo, serie, 
-        estado, valor, fecha_adquisicion, vida_util, categoria_id, ubicacion_id, 
-        responsable_id, observaciones
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        estado, valor_adquisicion, fecha_adquisicion, vida_util, categoria_id, ubicacion_id, 
+        responsable_id, observaciones, color, material
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         codigo_institucional,
         codigo_senescyt,
@@ -1582,6 +1584,8 @@ router.post("/bienes", verifyToken, async (req, res) => {
         ubicacion_id || null,
         responsable_id || null,
         observaciones || null,
+        color || null,
+        material || null,
       ]
     );
 
@@ -1619,6 +1623,8 @@ router.put("/bienes/:id", verifyToken, async (req, res) => {
       ubicacion_id,
       responsable_id,
       observaciones,
+      color,
+      material,
     } = req.body;
 
     // Verificar si el bien existe
@@ -1636,8 +1642,9 @@ router.put("/bienes/:id", verifyToken, async (req, res) => {
     await query(
       `UPDATE bienes SET 
         codigo_institucional = ?, codigo_senescyt = ?, nombre = ?, descripcion = ?, 
-        marca = ?, modelo = ?, serie = ?, estado = ?, valor = ?, fecha_adquisicion = ?, 
-        vida_util = ?, categoria_id = ?, ubicacion_id = ?, responsable_id = ?, observaciones = ?
+        marca = ?, modelo = ?, serie = ?, estado = ?, valor_adquisicion = ?, fecha_adquisicion = ?, 
+        vida_util = ?, categoria_id = ?, ubicacion_id = ?, responsable_id = ?, observaciones = ?,
+        color = ?, material = ?
       WHERE id_bien = ?`,
       [
         codigo_institucional,
@@ -1655,6 +1662,8 @@ router.put("/bienes/:id", verifyToken, async (req, res) => {
         ubicacion_id,
         responsable_id,
         observaciones,
+        color,
+        material,
         id,
       ]
     );

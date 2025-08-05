@@ -328,7 +328,40 @@
             ></textarea>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Marca
+              </label>
+              <input
+                v-model="formulario.marca"
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Modelo
+              </label>
+              <input
+                v-model="formulario.modelo"
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Número de Serie
+              </label>
+              <input
+                v-model="formulario.serie"
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Categoría
@@ -341,6 +374,20 @@
                 <option value="">Selecciona una categoría</option>
                 <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">
                   {{ categoria.nombre }}
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Ubicación
+              </label>
+              <select
+                v-model="formulario.ubicacion_id"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="">Selecciona una ubicación</option>
+                <option v-for="ubicacion in ubicaciones" :key="ubicacion.id" :value="ubicacion.id">
+                  {{ ubicacion.nombre }}
                 </option>
               </select>
             </div>
@@ -386,6 +433,55 @@
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
               />
             </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Color
+              </label>
+              <input
+                v-model="formulario.color"
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Material
+              </label>
+              <input
+                v-model="formulario.material"
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Responsable
+              </label>
+              <select
+                v-model="formulario.responsable_id"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="">Sin responsable</option>
+                <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario.id">
+                  {{ usuario.nombres }} {{ usuario.apellidos }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Observaciones
+            </label>
+            <textarea
+              v-model="formulario.observaciones"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+              placeholder="Cualquier observación adicional sobre el bien..."
+            ></textarea>
           </div>
 
           <div class="flex justify-end space-x-3 pt-4">
@@ -478,7 +574,7 @@ import { useAuth } from '@/composables/useAuth'
 import DataTable from '@/components/shared/DataTable.vue'
 import QRCode from 'qrcode'
 import apiClient from '@/api/client'
-import type { Asset, DataTableColumn, Category, Location } from '@/types'
+import type { Asset, DataTableColumn, Category, Location, User } from '@/types'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -511,16 +607,25 @@ const formulario = reactive({
   codigo_senescyt: '',
   nombre: '',
   descripcion: '',
+  marca: '',
+  modelo: '',
+  serie: '',
   categoria_id: '',
+  ubicacion_id: '',
   estado: 'activo',
   valor_adquisicion: 0,
   fecha_adquisicion: new Date().toISOString().split('T')[0],
+  color: '',
+  material: '',
+  observaciones: '',
+  responsable_id: '',
 })
 
 // Datos de bienes
 const bienes = ref<Asset[]>([])
 const categorias = ref<Category[]>([])
 const ubicaciones = ref<Location[]>([])
+const usuarios = ref<User[]>([])
 
 // Computadas
 const bienesActivos = computed(() => bienes.value.filter(bien => bien.estado === 'activo'))
@@ -584,10 +689,18 @@ const editarBien = (bien: Asset) => {
     codigo_senescyt: bien.codigo_senescyt,
     nombre: bien.nombre,
     descripcion: bien.descripcion,
+    marca: bien.marca || '',
+    modelo: bien.modelo || '',
+    serie: bien.serie || '',
     categoria_id: bien.categoria_id.toString(),
+    ubicacion_id: bien.ubicacion_id?.toString() || '',
     estado: bien.estado,
     valor_adquisicion: bien.valor_adquisicion,
     fecha_adquisicion: bien.fecha_adquisicion,
+    color: bien.color || '',
+    material: bien.material || '',
+    observaciones: bien.observaciones || '',
+    responsable_id: bien.responsable_id?.toString() || '',
   })
   mostrarModalEditar.value = true
 }
@@ -629,6 +742,8 @@ const guardarBien = async () => {
       body: JSON.stringify({
         ...formulario,
         categoria_id: parseInt(formulario.categoria_id),
+        ubicacion_id: formulario.ubicacion_id ? parseInt(formulario.ubicacion_id) : null,
+        responsable_id: formulario.responsable_id ? parseInt(formulario.responsable_id) : null,
       }),
     })
 
@@ -665,10 +780,18 @@ const cerrarModal = () => {
     codigo_senescyt: '',
     nombre: '',
     descripcion: '',
+    marca: '',
+    modelo: '',
+    serie: '',
     categoria_id: '',
+    ubicacion_id: '',
     estado: 'activo',
     valor_adquisicion: 0,
     fecha_adquisicion: new Date().toISOString().split('T')[0],
+    color: '',
+    material: '',
+    observaciones: '',
+    responsable_id: '',
   })
 }
 
@@ -958,6 +1081,19 @@ const cargarUbicaciones = async () => {
   }
 }
 
+const cargarUsuarios = async () => {
+  try {
+    const response = await apiClient.get('/usuarios')
+    if (response.success && response.data) {
+      usuarios.value = response.data
+    }
+  } catch (error) {
+    console.error('Error al cargar usuarios:', error)
+    usuarios.value = []
+    toast.error('Error al cargar los usuarios')
+  }
+}
+
 // Lifecycle
 // Watcher para generar QR visual cuando se muestra el modal
 watch([mostrarModalQR, qrActual], async ([modalVisible, qrData]) => {
@@ -968,6 +1104,6 @@ watch([mostrarModalQR, qrActual], async ([modalVisible, qrData]) => {
 })
 
 onMounted(async () => {
-  await Promise.all([cargarBienes(), cargarCategorias(), cargarUbicaciones()])
+  await Promise.all([cargarBienes(), cargarCategorias(), cargarUbicaciones(), cargarUsuarios()])
 })
 </script>

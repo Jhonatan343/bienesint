@@ -43,12 +43,12 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# dotenv environment variables file - COMMENTED FOR UPLOAD
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
 
 # parcel-bundler cache
 .cache
@@ -78,9 +78,9 @@ jspm_packages/
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# IDE
-.vscode/
-.idea/
+# IDE - COMMENTED FOR UPLOAD
+# .vscode/
+# .idea/
 *.swp
 *.swo
 
@@ -92,8 +92,8 @@ Thumbs.db
 logs
 *.log
 
-# Docker
-.dockerignore
+# Docker - COMMENTED FOR UPLOAD
+# .dockerignore
 
 # Build outputs
 dist/

@@ -423,6 +423,7 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useUIStore } from '@/stores/ui'
 import { useToast } from 'vue-toastification'
+import apiClient from '@/api/client'
 import type { User } from '@/types'
 
 const authStore = useAuthStore()
@@ -478,30 +479,30 @@ const preferences = ref({
 const loadUserProfile = async () => {
   loading.value = true
   try {
-    const response = await fetch('/api/auth/profile', {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    })
-
-    if (!response.ok) throw new Error('Error al cargar perfil')
-
-    const data = await response.json()
-    if (data.success) {
+    const response = await apiClient.get('/auth/profile')
+    if (response.success) {
+      const data = response
       const userData = data.data.user
       userProfile.value = {
-        id: userData.id_usuario,
-        nombre: userData.nombres,
-        apellido: userData.apellidos,
+        id: userData.id,
+        nombre: userData.nombre,
+        apellido: userData.apellido,
         email: userData.email,
         rol: data.data.roles[0]?.nombre || 'Usuario',
         estado: userData.activo ? 'activo' : 'inactivo',
-        documento: userData.cedula,
+        documento: userData.documento,
         departamento: userData.departamento || '',
         roles: data.data.roles || [],
         activo: userData.activo,
         created_at: userData.created_at || '',
         updated_at: userData.updated_at || '',
+      }
+      
+      // También actualizar el formulario personal
+      personalForm.value = {
+        nombre: userData.nombre,
+        apellido: userData.apellido,
+        email: userData.email,
       }
     } else {
       throw new Error(data.message || 'Error al cargar perfil')
@@ -606,26 +607,18 @@ const cancelPersonalEdit = () => {
 const savePersonalInfo = async () => {
   saving.value = true
   try {
-    const response = await fetch('/api/auth/profile', {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(personalForm.value),
-    })
-
-    if (!response.ok) throw new Error('Error al guardar perfil')
-
-    const data = await response.json()
-    if (data.success) {
-      userProfile.value = { ...userProfile.value, ...data.data }
+    const response = await apiClient.put('/auth/profile', personalForm.value)
+    
+    if (response.success) {
+      // Actualizar el perfil con los datos devueltos
+      userProfile.value = { ...userProfile.value, ...personalForm.value }
       editingPersonal.value = false
       toast.success('Perfil actualizado correctamente')
     } else {
-      throw new Error(data.message || 'Error al guardar perfil')
+      throw new Error(response.message || 'Error al guardar perfil')
     }
   } catch (error) {
+    console.error('Error updating profile:', error)
     toast.error('Error al actualizar el perfil')
   } finally {
     saving.value = false
@@ -647,13 +640,32 @@ const changePassword = async () => {
     return
   }
 
+  if (passwordForm.value.newPassword.length < 6) {
+    toast.error('La nueva contraseña debe tener al menos 6 caracteres')
+    return
+  }
+
   changingPassword.value = true
   try {
-    // API endpoint not available
-    toast.error('Función de cambio de contraseña no disponible temporalmente')
-    throw new Error('Password change endpoint not available')
+    const response = await apiClient.put('/auth/change-password', {
+      currentPassword: passwordForm.value.currentPassword,
+      newPassword: passwordForm.value.newPassword,
+    })
+
+    if (response.success) {
+      showPasswordForm.value = false
+      passwordForm.value = {
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      }
+      toast.success('Contraseña actualizada correctamente')
+    } else {
+      throw new Error(response.message || 'Error al cambiar la contraseña')
+    }
   } catch (error) {
-    toast.error('Error al cambiar la contraseña')
+    console.error('Error changing password:', error)
+    toast.error(error.message || 'Error al cambiar la contraseña')
   } finally {
     changingPassword.value = false
   }

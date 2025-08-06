@@ -340,6 +340,119 @@ router.get("/auth/profile", verifyToken, async (req, res) => {
   }
 });
 
+// Actualizar perfil del usuario autenticado
+router.put("/auth/profile", verifyToken, async (req, res) => {
+  try {
+    const { nombre, apellido, email } = req.body;
+
+    if (!nombre || !apellido || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Campos requeridos: nombre, apellido, email",
+      });
+    }
+
+    // Validar que el email sea del dominio institucional
+    if (!email.endsWith("@intsuperior.edu.ec")) {
+      return res.status(400).json({
+        success: false,
+        message: "El email debe ser del dominio @intsuperior.edu.ec",
+      });
+    }
+
+    // Verificar si el email ya existe para otro usuario
+    const existingUser = await query(
+      "SELECT * FROM usuarios WHERE email = ? AND id_usuario != ?",
+      [email, req.user.id]
+    );
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "El email ya está en uso por otro usuario",
+      });
+    }
+
+    // Actualizar usuario
+    await query(
+      "UPDATE usuarios SET nombres = ?, apellidos = ?, email = ? WHERE id_usuario = ?",
+      [nombre, apellido, email, req.user.id]
+    );
+
+    res.json({
+      success: true,
+      message: "Perfil actualizado exitosamente",
+      data: {
+        nombre,
+        apellido,
+        email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error actualizando perfil",
+      error: error.message,
+    });
+  }
+});
+
+// Cambiar contraseña del usuario autenticado
+router.put("/auth/change-password", verifyToken, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Se requiere la contraseña actual y la nueva contraseña",
+      });
+    }
+
+    // Verificar contraseña actual
+    const user = await query(
+      "SELECT * FROM usuarios WHERE id_usuario = ?",
+      [req.user.id]
+    );
+
+    if (user.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user[0].password_hash);
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "La contraseña actual es incorrecta",
+      });
+    }
+
+    // Encriptar nueva contraseña
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Actualizar contraseña
+    await query(
+      "UPDATE usuarios SET password_hash = ? WHERE id_usuario = ?",
+      [hashedNewPassword, req.user.id]
+    );
+
+    res.json({
+      success: true,
+      message: "Contraseña actualizada exitosamente",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error cambiando contraseña",
+      error: error.message,
+    });
+  }
+});
+
 // ==================== USUARIOS ====================
 
 // Crear usuario
